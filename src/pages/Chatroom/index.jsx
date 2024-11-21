@@ -1,7 +1,5 @@
 const Chatroom = () => {
-  return (
-    <div>Chatroom</div>
-  )
-}
+	return <div>Chatroom</div>;
+};
 
-export default Chatroom
+export default Chatroom;
