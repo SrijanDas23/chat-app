@@ -60,6 +60,28 @@ button:focus-visible {
 	outline: 4px auto -webkit-focus-ring-color;
 }
 
+::-webkit-scrollbar {
+	width: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: #7e56c6;
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #5a1791;
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #24063d;
+}
+
+.selectedChat:hover {
+	background-color: #7d56c647;
+}
+
 @media (prefers-color-scheme: light) {
 	:root {
 		color: #213547;

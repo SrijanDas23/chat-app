@@ -1,7 +1,5 @@
 const Chat = () => {
-  return (
-    <div>Chat</div>
-  )
-}
+	return <div style={{ padding: "2rem" }}>Chat</div>;
+};
 
-export default Chat
+export default Chat;
