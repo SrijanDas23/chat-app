@@ -10,7 +10,7 @@ const Profile = () => {
 	const { currentUser } = useSelector((state) => state.user);
 	console.log(currentUser);
 	console.log(currentUser.photoURL);
-	const [showTooltip, setShowTooltip] = useState(false);
+	const [showTooltip, setShowTooltip] = useState(null);
 	const { showToast } = useToast();
 
 	const copyToClipboard = () => {
@@ -78,11 +78,11 @@ const Profile = () => {
 							cursor: "pointer",
 							display: "flex",
 						}}
-						onMouseEnter={() => setShowTooltip(true)}
-						onMouseLeave={() => setShowTooltip(false)}
+						onMouseEnter={() => setShowTooltip("info")}
+						onMouseLeave={() => setShowTooltip(null)}
 					>
 						<RxInfoCircled />
-						{showTooltip && (
+						{showTooltip === "info" && (
 							<Tooltip message="Send this unique ID to your friend to add you!" />
 						)}
 					</div>
@@ -100,10 +100,17 @@ const Profile = () => {
 				>
 					<p>{currentUser.uid}</p>
 
-					<PiCopy
-						style={{ cursor: "pointer" }}
+					<div
+						style={{ position: "relative", cursor: "pointer" }}
+						onMouseEnter={() => setShowTooltip("copy")}
+						onMouseLeave={() => setShowTooltip(null)}
 						onClick={copyToClipboard}
-					/>
+					>
+						<PiCopy />
+						{showTooltip === "copy" && (
+							<Tooltip message="Click to copy User ID!" />
+						)}
+					</div>
 				</div>
 			</div>
 			<div

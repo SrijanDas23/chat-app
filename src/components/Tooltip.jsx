@@ -8,7 +8,7 @@ const Tooltip = ({ message }) => {
 					top: "-40px",
 					left: "50%",
 					transform: "translateX(-50%)",
-					backgroundColor: "rgba(0, 0, 0, 0.3)",
+					backgroundColor: "#24063dc3",
 					color: "white",
 					padding: "5px 10px",
 					borderRadius: "5px",
