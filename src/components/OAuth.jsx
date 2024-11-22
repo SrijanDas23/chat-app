@@ -4,7 +4,7 @@ import {
 	signInWithPopup,
 	signOut,
 } from "firebase/auth";
-import { app } from "../utils/firebase";
+import { app, db } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,12 +16,14 @@ import {
 	signOutUserSuccess,
 } from "../redux/user/userSlice";
 import { useToast } from "../context/ToastContext";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export default function OAuth() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
 	const { currentUser } = useSelector((state) => state.user);
+	console.log(currentUser);
 	const { showToast } = useToast();
 
 	const handleGoogleClick = async () => {
@@ -32,15 +34,32 @@ export default function OAuth() {
 			const auth = getAuth(app);
 
 			const result = await signInWithPopup(auth, provider);
-			dispatch(signInSuccess(result.user));
+			const { uid, displayName, email, photoURL } = result.user;
 
-			showToast(`Welcome, ${result.user.displayName}!`);
+			const userRef = doc(db, "users", uid);
+			let userData = {
+				userUid: uid,
+				userName: displayName,
+				email: email,
+				photoURL: photoURL,
+			};
 
-			console.log("signed in successfully", result.user);
+			const userSnap = await getDoc(userRef);
+			if (!userSnap.exists()) {
+				await setDoc(userRef, {
+					...userData,
+					createdAt: new Date().toISOString(),
+				});
+			} else {
+				userData = userSnap.data();
+			}
 
+			dispatch(signInSuccess(userData));
+
+			showToast(`Welcome, ${userData.userName}!`);
 			navigate("/");
 		} catch (e) {
-			console.error(e);
+			console.error("Sign-in failed:", e);
 			dispatch(signInFailure(e));
 			showToast("Sign-in failed. Please try again.");
 		}
