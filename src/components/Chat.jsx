@@ -25,6 +25,9 @@ const Chat = () => {
 	const { currentUser } = useSelector((state) => state.user);
 	const currentUserUid = currentUser?.userUid;
 	const otherUser = useSelector((state) => state.otherUser.otherUserInChat);
+	const photoURL = otherUser.photoURL
+		? otherUser.photoURL.slice(0, -6)
+		: "";
 
 	const chatRoomId =
 		currentUserUid > otherUser.userUid
@@ -106,7 +109,7 @@ const Chat = () => {
 				}}
 			>
 				<img
-					src={otherUser.photoURL}
+					src={photoURL}
 					alt={otherUser.userName}
 					style={{
 						width: "40px",

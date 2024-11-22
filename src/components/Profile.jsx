@@ -12,6 +12,8 @@ const Profile = () => {
 	console.log(currentUser.photoURL);
 	const [showTooltip, setShowTooltip] = useState(null);
 	const { showToast } = useToast();
+	const photoURL = currentUser.photoURL ? currentUser.photoURL.slice(0, -6) : "";
+
 
 	const copyToClipboard = () => {
 		navigator.clipboard
@@ -45,7 +47,7 @@ const Profile = () => {
 				}}
 			>
 				<img
-					src={currentUser.photoURL}
+					src={photoURL}
 					alt={`Photo of ${currentUser.userName}`}
 					style={{
 						width: "90px",

@@ -4,7 +4,6 @@ const ChatList = () => {
 			style={{
 				display: "flex",
 				flexDirection: "column",
-				// rowGap: "1rem",
 				paddingTop: "0",
 				overflowY: "auto",
 				marginBottom: "1rem",

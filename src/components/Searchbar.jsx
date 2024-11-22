@@ -123,7 +123,9 @@ const Searchbar = () => {
 						onClick={() => handleUserSelect(user)}
 					>
 						<img
-							src={user.photoURL}
+							src={
+								user.photoURL ? user.photoURL.slice(0, -6) : ""
+							}
 							alt={user.displayName}
 							style={{
 								width: "40px",
