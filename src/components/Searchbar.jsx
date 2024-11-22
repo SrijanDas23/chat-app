@@ -3,65 +3,69 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../utils/firebase";
 import { getAuth } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { setOtherUserInChat } from "../redux/otherUser/otherUserSlice";
 
 const Searchbar = () => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [results, setResults] = useState([]);
 	const [loading, setLoading] = useState(false);
+	const dispatch = useDispatch();
 
 	const auth = getAuth();
 
-const handleSearch = async (term) => {
-	if (!term.trim()) {
-		setResults([]);
-		return;
-	}
+	const handleSearch = async (term) => {
+		if (!term.trim()) {
+			setResults([]);
+			return;
+		}
 
-	setLoading(true);
-	try {
-		const usersRef = collection(db, "users");
+		setLoading(true);
+		try {
+			const usersRef = collection(db, "users");
 
-		const uidQuery = query(
-			usersRef,
-			where("userUid", ">=", term),
-			where("userUid", "<=", term + "\uf8ff")
-		);
+			const uidQuery = query(
+				usersRef,
+				where("userUid", ">=", term),
+				where("userUid", "<=", term + "\uf8ff")
+			);
 
-		const nameQuery = query(
-			usersRef,
-			where("userName", ">=", term),
-			where("userName", "<=", term + "\uf8ff")
-		);
+			const nameQuery = query(
+				usersRef,
+				where("userName", ">=", term),
+				where("userName", "<=", term + "\uf8ff")
+			);
 
-		const [uidSnapshot, nameSnapshot] = await Promise.all([
-			getDocs(uidQuery),
-			getDocs(nameQuery),
-		]);
+			const [uidSnapshot, nameSnapshot] = await Promise.all([
+				getDocs(uidQuery),
+				getDocs(nameQuery),
+			]);
 
-		const uidResults = uidSnapshot.docs.map((doc) => ({
-			id: doc.id,
-			...doc.data(),
-		}));
+			const uidResults = uidSnapshot.docs.map((doc) => ({
+				id: doc.id,
+				...doc.data(),
+			}));
 
-		const nameResults = nameSnapshot.docs.map((doc) => ({
-			id: doc.id,
-			...doc.data(),
-		}));
+			const nameResults = nameSnapshot.docs.map((doc) => ({
+				id: doc.id,
+				...doc.data(),
+			}));
 
-		const allResults = [...uidResults, ...nameResults];
-		const uniqueResults = allResults.filter(
-			(user, index, self) =>
-				index === self.findIndex((u) => u.id === user.id)
-		);
+			const allResults = [...uidResults, ...nameResults];
+			const uniqueResults = allResults.filter(
+				(user, index, self) =>
+					index === self.findIndex((u) => u.id === user.id) &&
+					user.userUid !== auth.currentUser.uid
+			);
 
-		setResults(uniqueResults);
-	} catch (error) {
-		console.error("Error searching users:", error);
-	} finally {
-		setLoading(false);
-	}
-};
-
+			setResults(uniqueResults);
+			console.log(uniqueResults);
+		} catch (error) {
+			console.error("Error searching users:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	useEffect(() => {
 		const delayDebounce = setTimeout(() => {
@@ -70,6 +74,12 @@ const handleSearch = async (term) => {
 
 		return () => clearTimeout(delayDebounce);
 	}, [searchTerm]);
+
+	const handleUserSelect = (user) => {
+		dispatch(setOtherUserInChat(user));
+		setSearchTerm("");
+		console.log("Selected User:", user);
+	};
 
 	return (
 		<div
@@ -80,7 +90,7 @@ const handleSearch = async (term) => {
 		>
 			<input
 				type="text"
-				placeholder="Search by User Uid..."
+				placeholder="Search by User Uid/Name..."
 				value={searchTerm}
 				onChange={(e) => setSearchTerm(e.target.value)}
 				style={{
@@ -110,12 +120,16 @@ const handleSearch = async (term) => {
 							borderRadius: "0 0 20px 20px",
 						}}
 						className="selectedChat"
-						onClick={() => console.log("Selected User:", user)}
+						onClick={() => handleUserSelect(user)}
 					>
 						<img
 							src={user.photoURL}
 							alt={user.displayName}
-							style={{ width: "40px", borderRadius: "50%" }}
+							style={{
+								width: "40px",
+								height: "40px",
+								borderRadius: "50%",
+							}}
 						/>
 						<div
 							style={{

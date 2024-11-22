@@ -59,9 +59,9 @@ export default function OAuth() {
 			showToast(`Welcome, ${userData.userName}!`);
 			navigate("/");
 		} catch (e) {
-			console.error("Sign-in failed:", e);
+			console.error("Sign in failed:", e);
 			dispatch(signInFailure(e));
-			showToast("Sign-in failed. Please try again.");
+			showToast("Sign in failed. Please try again");
 		}
 	};
 

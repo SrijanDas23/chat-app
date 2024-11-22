@@ -3,6 +3,7 @@ import userReducer from "./user/userSlice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import createTransform from "redux-persist/es/createTransform";
+import otherUserReducer from "./otherUser/otherUserSlice";
 
 const staySignedInTransform = createTransform(
 	(inboundState) => {
@@ -20,9 +21,13 @@ const persistConfig = {
 	storage,
 	version: 1,
 	transforms: [staySignedInTransform],
+	blacklist: ["otherUser"],
 };
 
-const rootReducer = combineReducers({ user: userReducer });
+const rootReducer = combineReducers({
+	user: userReducer,
+	otherUser: otherUserReducer,
+});
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

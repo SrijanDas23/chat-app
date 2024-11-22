@@ -46,12 +46,14 @@ const Profile = () => {
 			>
 				<img
 					src={currentUser.photoURL}
-					alt={`Photo of ${currentUser.displayName}`}
-					style={{ width: "100px", borderRadius: "50%" }}
+					alt={`Photo of ${currentUser.userName}`}
+					style={{
+						width: "90px",
+						height: "90px",
+						borderRadius: "50%",
+					}}
 				/>
-				<h2 style={{ fontSize: "1.2rem" }}>
-					{currentUser.displayName}
-				</h2>
+				<h2 style={{ fontSize: "1.2rem" }}>{currentUser.userName}</h2>
 				<p style={{ fontSize: "0.9rem" }}>{currentUser.email}</p>
 			</div>
 			<div
@@ -98,7 +100,7 @@ const Profile = () => {
 						fontSize: "0.8rem",
 					}}
 				>
-					<p>{currentUser.uid}</p>
+					<p>{currentUser.userUid}</p>
 
 					<div
 						style={{ position: "relative", cursor: "pointer" }}

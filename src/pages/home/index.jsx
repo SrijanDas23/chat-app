@@ -1,8 +1,10 @@
+import { useSelector } from "react-redux";
 import Chat from "../../components/Chat";
 import Profile from "../../components/Profile";
 import Sidebar from "../../components/Sidebar";
 
 const Home = () => {
+	const otherUser = useSelector((state) => state.otherUser.otherUserInChat);
 	return (
 		<div
 			style={{
@@ -16,7 +18,13 @@ const Home = () => {
 			}}
 		>
 			<Sidebar />
-			<Chat />
+			{otherUser ? (
+				<Chat />
+			) : (
+				<div style={{ padding: "2rem" }}>
+					Select a user to start chatting
+				</div>
+			)}
 			<Profile />
 		</div>
 	);

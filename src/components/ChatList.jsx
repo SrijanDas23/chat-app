@@ -7,6 +7,7 @@ const ChatList = () => {
 				// rowGap: "1rem",
 				paddingTop: "0",
 				overflowY: "auto",
+				marginBottom: "1rem",
 			}}
 		>
 			{[...Array(8)].map((_, index) => (
@@ -45,7 +46,8 @@ const ChatList = () => {
 								maxWidth: "150px",
 							}}
 						>
-							This person&apos;s text is wdhdw wdowhdw dwkndw kwndkwnd{" "}
+							This person&apos;s text is wdhdw wdowhdw dwkndw
+							kwndkwnd{" "}
 						</p>
 					</div>
 				</div>
