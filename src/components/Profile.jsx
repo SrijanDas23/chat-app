@@ -2,22 +2,65 @@ import { useSelector } from "react-redux";
 import OAuth from "./OAuth";
 import { RxInfoCircled } from "react-icons/rx";
 import { PiCopy } from "react-icons/pi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "../context/ToastContext";
 import Tooltip from "./Tooltip";
+import Block from "./Block";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../utils/firebase";
 
 const Profile = () => {
+	const [isBlocked, setIsBlocked] = useState(false);
 	const { currentUser } = useSelector((state) => state.user);
+	const otherUser = useSelector((state) => state.otherUser.otherUserInChat);
 	console.log(currentUser);
 	console.log(currentUser.photoURL);
 	const [showTooltip, setShowTooltip] = useState(null);
 	const { showToast } = useToast();
-	const photoURL = currentUser.photoURL ? currentUser.photoURL.slice(0, -6) : "";
 
+	const user = otherUser || currentUser;
+	const userName = user.userName;
+	const userUid = user.userUid;
+	const email = otherUser ? "" : currentUser.email;
+
+	const defaultAvatar = "../../avatar.jpg";
+
+	useEffect(() => {
+		const checkIfBlocked = async () => {
+			if (!currentUser || !otherUser) return;
+
+			try {
+				const blockerDocRef = doc(db, "blocked", currentUser.userUid);
+				const blockerDocSnap = await getDoc(blockerDocRef);
+
+				if (blockerDocSnap.exists()) {
+					const blockedUsers =
+						blockerDocSnap.data().blockedUsers || [];
+					if (blockedUsers.includes(otherUser.userUid)) {
+						setIsBlocked(true);
+					} else {
+						setIsBlocked(false);
+					}
+				} else {
+					setIsBlocked(false);
+				}
+			} catch (error) {
+				console.error("Error checking if user is blocked:", error);
+			}
+		};
+
+		checkIfBlocked();
+	}, [currentUser, otherUser]);
+
+	const photoURL = isBlocked
+		? defaultAvatar
+		: user.photoURL
+		? user.photoURL.slice(0, -6)
+		: defaultAvatar;
 
 	const copyToClipboard = () => {
 		navigator.clipboard
-			.writeText(currentUser.uid)
+			.writeText(userUid)
 			.then(() => {
 				showToast("Copied Successfully to Clipboard");
 			})
@@ -47,21 +90,22 @@ const Profile = () => {
 				}}
 			>
 				<img
+					key={isBlocked ? "blocked" : "unblocked"}
 					height="auto"
 					width="auto"
 					src={photoURL}
-					alt={`Photo of ${currentUser.userName}`}
+					alt={`Photo of ${userName}`}
 					style={{
 						width: "90px",
 						height: "90px",
 						borderRadius: "50%",
 					}}
-					title={`Photo of ${currentUser.userName}`}
+					title={`Photo of ${userName}`}
 					loading="eager"
 					referrerPolicy="no-referrer"
 				/>
-				<h1 style={{ fontSize: "1.2rem" }}>{currentUser.userName}</h1>
-				<p style={{ fontSize: "0.9rem" }}>{currentUser.email}</p>
+				<h1 style={{ fontSize: "1.2rem" }}>{userName}</h1>
+				<p style={{ fontSize: "0.9rem" }}>{email}</p>
 			</div>
 			<div
 				style={{
@@ -107,7 +151,7 @@ const Profile = () => {
 						fontSize: "0.8rem",
 					}}
 				>
-					<p>{currentUser.userUid}</p>
+					<p>{userUid}</p>
 
 					<div
 						style={{ position: "relative", cursor: "pointer" }}
@@ -117,7 +161,10 @@ const Profile = () => {
 					>
 						<PiCopy />
 						{showTooltip === "copy" && (
-							<Tooltip message="Click to copy User ID!" />
+							<Tooltip
+								message="Click to copy User ID!"
+								top="25px"
+							/>
 						)}
 					</div>
 				</div>
@@ -130,7 +177,7 @@ const Profile = () => {
 					alignItems: "center",
 				}}
 			>
-				<OAuth />
+				{!otherUser ? <OAuth /> : <Block />}
 			</div>
 		</div>
 	);

@@ -14,6 +14,9 @@ import { getAuth } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import Loading from "./Loading";
 import { clearDraft, saveDraft } from "../redux/drafts/draftsSlice";
+import { TiArrowBack } from "react-icons/ti";
+import { setOtherUserInChat } from "../redux/otherUser/otherUserSlice";
+import Tooltip from "./Tooltip";
 
 const Chat = () => {
 	const [messages, setMessages] = useState([]);
@@ -21,7 +24,9 @@ const Chat = () => {
 	const [loading, setLoading] = useState(true);
 	const dummy = useRef(null);
 	const [changeInMessage, setChangeInMessage] = useState(0);
+	const [isBlocked, setIsBlocked] = useState(false);
 	const dispatch = useDispatch();
+	const [showTooltip, setShowTooltip] = useState(false);
 
 	// eslint-disable-next-line no-unused-vars
 	const auth = getAuth();
@@ -43,6 +48,38 @@ const Chat = () => {
 	useEffect(() => {
 		setNewMessage(currentDraft || "");
 	}, [chatRoomId, currentDraft]);
+
+	useEffect(() => {
+		// Check if either user has blocked the other
+		const checkBlockingStatus = async () => {
+			try {
+				const currentUserBlockDoc = await getDoc(
+					doc(db, "blocked", currentUserUid)
+				);
+				const otherUserBlockDoc = await getDoc(
+					doc(db, "blocked", otherUser.userUid)
+				);
+
+				const currentUserBlocked =
+					currentUserBlockDoc.exists() &&
+					currentUserBlockDoc
+						.data()
+						.blockedUsers.includes(otherUser.userUid);
+
+				const otherUserBlocked =
+					otherUserBlockDoc.exists() &&
+					otherUserBlockDoc
+						.data()
+						.blockedUsers.includes(currentUserUid);
+
+				setIsBlocked(currentUserBlocked || otherUserBlocked);
+			} catch (error) {
+				console.error("Error checking block status:", error);
+			}
+		};
+
+		checkBlockingStatus();
+	}, [currentUserUid, otherUser.userUid]);
 
 	useEffect(() => {
 		const checkAndCreateChatRoom = async () => {
@@ -136,6 +173,18 @@ const Chat = () => {
 					margin: "1rem",
 				}}
 			>
+				<div
+					style={{ position: "relative", cursor: "pointer" }}
+					onMouseEnter={() => setShowTooltip(true)}
+					onMouseLeave={() => setShowTooltip(false)}
+					onClick={() => dispatch(setOtherUserInChat(null))}
+				>
+					<TiArrowBack
+						size={25}
+						style={{ cursor: "pointer", marginLeft: "-0.6rem" }}
+					/>
+					{showTooltip && <Tooltip message="Go back" top="-30px" />}
+				</div>
 				<img
 					src={photoURL}
 					alt={otherUser.userName}
@@ -240,13 +289,14 @@ const Chat = () => {
 					placeholder="Type a message..."
 					style={{
 						border: "1.5px solid #7e56c6",
-						backgroundColor: "transparent",
 						borderRadius: "20px",
 						padding: "0.5rem",
 						outline: "none",
 						flex: "1",
 						marginRight: "0.8rem",
+						pointerEvents: isBlocked ? "none" : "auto",
 					}}
+					disabled={isBlocked}
 				/>
 				<button
 					onClick={handleSendMessage}
@@ -255,8 +305,9 @@ const Chat = () => {
 						color: "#fff",
 						border: "none",
 						borderRadius: "20px",
-						cursor: "pointer",
+						cursor: isBlocked ? "not-allowed" : "pointer",
 					}}
+					disabled={isBlocked}
 				>
 					Send
 				</button>
