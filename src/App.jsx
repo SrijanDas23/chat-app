@@ -1,9 +1,8 @@
-import Chatroom from "./pages/Chatroom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
-import Home from "./pages/home";
 import PrivateRoute from "./components/PrivateRoute";
 import Toast from "./components/Toast";
+import Home from "./pages/Home";
 
 function App() {
 	return (
@@ -13,10 +12,6 @@ function App() {
 
 				<Route element={<PrivateRoute />}>
 					<Route path="/" element={<Home />} />
-					<Route
-						path="/chatroom/:chatroomId"
-						element={<Chatroom />}
-					/>
 				</Route>
 			</Routes>
 			<Toast />

@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import OAuth from "../../components/OAuth";
 import { setStaySignedIn } from "../../redux/user/userSlice";
+import { Helmet } from "react-helmet-async";
 
 const Login = () => {
 	const dispatch = useDispatch();
@@ -27,6 +28,14 @@ const Login = () => {
 				boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.3)",
 			}}
 		>
+			<Helmet>
+				<title>Sign In</title>
+				<meta
+					name="description"
+					content="Sign In page. You need to sign in to gain access to our website"
+				/>
+				<link rel="canonical" href="/login" />
+			</Helmet>
 			<h1>Welcome to Chat App!</h1>
 			<p>Sign in to gain access to the site.</p>
 			<OAuth />

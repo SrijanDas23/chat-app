@@ -96,13 +96,14 @@ const ChatList = () => {
 									: "../../public/avatar.jpg"
 							}
 							alt={otherUser?.userName || "Avatar"}
+							title={otherUser?.userName || "Avatar"}
 							style={{
 								width: "40px",
 								height: "40px",
 								borderRadius: "50%",
 							}}
 							referrerPolicy="no-referrer"
-							loading="lazy"
+							loading="eager"
 						/>
 						<div
 							style={{
