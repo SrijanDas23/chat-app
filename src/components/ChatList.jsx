@@ -1,15 +1,14 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { db } from "../utils/firebase";
-import { setOtherUserInChat } from "../redux/otherUser/otherUserSlice";
+import ChatShortcut from "./ChatShortcut";
 
 const ChatList = () => {
 	const [chats, setChats] = useState([]);
 	const [users, setUsers] = useState({});
 	const { currentUser } = useSelector((state) => state.user);
 	const currentUserUid = currentUser?.userUid;
-	const dispatch = useDispatch();
 
 	useEffect(() => {
 		const fetchChats = async () => {
@@ -52,11 +51,6 @@ const ChatList = () => {
 		}
 	}, [currentUserUid]);
 
-	const handleUserSelect = (user) => {
-		dispatch(setOtherUserInChat(user));
-		console.log("Selected User:", user);
-	};
-
 	return (
 		<div
 			style={{
@@ -73,67 +67,7 @@ const ChatList = () => {
 				const otherUserId = user1 === currentUserUid ? user2 : user1;
 				const otherUser = users[otherUserId];
 
-				return (
-					<div
-						key={index}
-						style={{
-							display: "flex",
-							columnGap: "1rem",
-							cursor: "pointer",
-							padding: "1rem 2rem",
-							borderRadius: "40px",
-							transition: "background-color 0.3s",
-						}}
-						onClick={() => handleUserSelect(otherUser)}
-						className="selectedChat"
-					>
-						<img
-							height="auto"
-							width="auto"
-							src={
-								otherUser?.photoURL
-									? otherUser.photoURL.slice(0, -6)
-									: "../../public/avatar.jpg"
-							}
-							alt={otherUser?.userName || "Avatar"}
-							title={otherUser?.userName || "Avatar"}
-							style={{
-								width: "40px",
-								height: "40px",
-								borderRadius: "50%",
-							}}
-							referrerPolicy="no-referrer"
-							loading="eager"
-						/>
-						<div
-							style={{
-								display: "flex",
-								flexDirection: "column",
-								justifyContent: "space-between",
-							}}
-						>
-							<h2
-								style={{
-									fontSize: "0.9rem",
-								}}
-							>
-								{otherUser?.userName || "Unknown User"}
-							</h2>
-							<p
-								style={{
-									fontSize: "0.8rem",
-									overflow: "hidden",
-									textOverflow: "ellipsis",
-									whiteSpace: "nowrap",
-									wordWrap: "break-word",
-									maxWidth: "150px",
-								}}
-							>
-								UID: {otherUser?.userUid || "N/A"}
-							</p>
-						</div>
-					</div>
-				);
+				return <ChatShortcut key={index} otherUser={otherUser} />;
 			})}
 		</div>
 	);
