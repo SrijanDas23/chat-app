@@ -16,6 +16,8 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 	const dispatch = useDispatch();
 	const { currentUser } = useSelector((state) => state.user);
 
+	const drafts = useSelector((state) => state.drafts);
+	const draftMessage = drafts[chatId];
 	const chatRef = doc(db, "chats", chatId);
 	const textRef = collection(chatRef, "messages");
 
@@ -61,7 +63,7 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 				cursor: "pointer",
 				padding: "1rem 2rem",
 				borderRadius: "40px",
-				transition: "background-color 0.3s",
+				transition: "background-color 0.4s",
 			}}
 			onClick={() => handleUserSelect(otherUser)}
 			className="selectedChat"
@@ -108,10 +110,15 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 						maxWidth: "150px",
 					}}
 				>
-					{latestMessage?.senderId === currentUser.userUid
-						? "You: "
-						: ""}
-					{latestMessage?.content || "No messages yet"}
+					{draftMessage
+						? `Draft: ${draftMessage}`
+						: latestMessage
+						? `${
+								latestMessage?.senderId === currentUser.userUid
+									? "You: "
+									: ""
+							}${latestMessage?.content}`
+						: "No messages yet"}
 				</p>
 			</div>
 		</div>

@@ -4,6 +4,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import createTransform from "redux-persist/es/createTransform";
 import otherUserReducer from "./otherUser/otherUserSlice";
+import draftsReducer from "./drafts/draftsSlice";
 
 const staySignedInTransform = createTransform(
 	(inboundState) => {
@@ -27,6 +28,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
 	user: userReducer,
 	otherUser: otherUserReducer,
+	drafts: draftsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

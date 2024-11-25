@@ -11,8 +11,9 @@ import {
 	setDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Loading from "./Loading";
+import { clearDraft, saveDraft } from "../redux/drafts/draftsSlice";
 
 const Chat = () => {
 	const [messages, setMessages] = useState([]);
@@ -20,6 +21,7 @@ const Chat = () => {
 	const [loading, setLoading] = useState(true);
 	const dummy = useRef(null);
 	const [changeInMessage, setChangeInMessage] = useState(0);
+	const dispatch = useDispatch();
 
 	// eslint-disable-next-line no-unused-vars
 	const auth = getAuth();
@@ -34,6 +36,13 @@ const Chat = () => {
 			: `${otherUser.userUid}_${currentUserUid}`;
 	const chatRoomRef = doc(db, "chats", chatRoomId);
 	const messagesRef = collection(chatRoomRef, "messages");
+
+	const drafts = useSelector((state) => state.drafts);
+	const currentDraft = drafts[chatRoomId] || "";
+
+	useEffect(() => {
+		setNewMessage(currentDraft || "");
+	}, [chatRoomId, currentDraft]);
 
 	useEffect(() => {
 		const checkAndCreateChatRoom = async () => {
@@ -87,6 +96,11 @@ const Chat = () => {
 		return () => unsubscribe();
 	}, [chatRoomRef, messagesRef]);
 
+	const handleInputChange = (e) => {
+		setNewMessage(e.target.value);
+		dispatch(saveDraft({ chatRoomId, draftMessage: e.target.value }));
+	};
+
 	const handleSendMessage = async () => {
 		if (newMessage.trim() === "") return;
 
@@ -99,6 +113,7 @@ const Chat = () => {
 		try {
 			await addDoc(messagesRef, message);
 			setNewMessage("");
+			dispatch(clearDraft({ chatRoomId }));
 			setChangeInMessage((prev) => prev + 1);
 		} catch (error) {
 			console.error("Error sending message: ", error);
@@ -221,7 +236,7 @@ const Chat = () => {
 				<input
 					type="text"
 					value={newMessage}
-					onChange={(e) => setNewMessage(e.target.value)}
+					onChange={handleInputChange}
 					placeholder="Type a message..."
 					style={{
 						border: "1.5px solid #7e56c6",
