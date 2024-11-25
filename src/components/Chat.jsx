@@ -64,6 +64,14 @@ const Chat = () => {
 		const unsubscribe = onSnapshot(q, (snapshot) => {
 			const messagesData = snapshot.docs.map((doc) => doc.data());
 
+			const newMessages = messagesData.filter(
+            (msg) => !messages.some((existingMsg) => existingMsg.timestamp?.toMillis() === msg.timestamp?.toMillis())
+        );
+
+        if (newMessages.length > 0) {
+			setChangeInMessage((prev) => prev + 1);
+        }
+
 			setTimeout(() => {
 				setMessages(messagesData);
 				setLoading(false);
