@@ -65,15 +65,21 @@ const Chat = () => {
 			const messagesData = snapshot.docs.map((doc) => doc.data());
 
 			const newMessages = messagesData.filter(
-            (msg) => !messages.some((existingMsg) => existingMsg.timestamp?.toMillis() === msg.timestamp?.toMillis())
-        );
+				(msg) =>
+					!messages.some(
+						(existingMsg) =>
+							existingMsg.timestamp?.toMillis() ===
+							msg.timestamp?.toMillis()
+					)
+			);
 
-        if (newMessages.length > 0) {
-			setChangeInMessage((prev) => prev + 1);
-        }
+			if (newMessages.length > 0) {
+				setChangeInMessage((prev) => prev + 1);
+			}
 
 			setTimeout(() => {
 				setMessages(messagesData);
+				console.log(messages);
 				setLoading(false);
 			}, 300);
 		});

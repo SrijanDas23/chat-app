@@ -1,9 +1,53 @@
 import PropTypes from "prop-types";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setOtherUserInChat } from "../redux/otherUser/otherUserSlice";
+import { useEffect, useState } from "react";
+import {
+	collection,
+	doc,
+	onSnapshot,
+	orderBy,
+	query,
+} from "firebase/firestore";
+import { db } from "../utils/firebase";
 
-const ChatShortcut = ({ otherUser }) => {
+const ChatShortcut = ({ otherUser, chatId }) => {
+	const [latestMessage, setLatestMessage] = useState(null);
 	const dispatch = useDispatch();
+	const { currentUser } = useSelector((state) => state.user);
+
+	const chatRef = doc(db, "chats", chatId);
+	const textRef = collection(chatRef, "messages");
+
+	useEffect(() => {
+		const q = query(textRef, orderBy("timestamp", "asc"));
+		const unsubscribed = onSnapshot(q, (snapshot) => {
+			if (!snapshot.empty) {
+				const messagesData = snapshot.docs.map((doc) => doc.data());
+				const lastMessage = messagesData[messagesData.length - 1];
+				setLatestMessage(lastMessage);
+				console.log(lastMessage);
+			}
+		});
+
+		return () => unsubscribed();
+	}, []);
+
+	useEffect(() => {
+		const q = query(textRef, orderBy("timestamp", "asc"));
+		const unsubscribed = onSnapshot(q, (snapshot) => {
+			if (!snapshot.empty) {
+				const messagesData = snapshot.docs.map((doc) => doc.data());
+				const lastMessage = messagesData[messagesData.length - 1];
+				setTimeout(() => {
+					setLatestMessage(lastMessage);
+					// console.log(lastMessage);
+				}, 600);
+			}
+		});
+
+		return () => unsubscribed();
+	}, [textRef]);
 
 	const handleUserSelect = (user) => {
 		dispatch(setOtherUserInChat(user));
@@ -64,7 +108,10 @@ const ChatShortcut = ({ otherUser }) => {
 						maxWidth: "150px",
 					}}
 				>
-					UID: {otherUser?.userUid || "N/A"}
+					{latestMessage?.senderId === currentUser.userUid
+						? "You: "
+						: ""}
+					{latestMessage?.content || "No messages yet"}
 				</p>
 			</div>
 		</div>
@@ -77,6 +124,7 @@ ChatShortcut.propTypes = {
 		userName: PropTypes.string,
 		userUid: PropTypes.string,
 	}),
+	chatId: PropTypes.string.isRequired,
 };
 
 export default ChatShortcut;
