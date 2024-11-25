@@ -123,15 +123,20 @@ const Searchbar = () => {
 						onClick={() => handleUserSelect(user)}
 					>
 						<img
+							width="auto"
+							height="auto"
 							src={
 								user.photoURL ? user.photoURL.slice(0, -6) : ""
 							}
-							alt={user.displayName}
+							alt={user.userName || "User image"}
 							style={{
 								width: "40px",
 								height: "40px",
 								borderRadius: "50%",
 							}}
+							title={user.userName || "User Image"}
+							loading="lazy"
+							referrerPolicy="no-referrer"
 						/>
 						<div
 							style={{

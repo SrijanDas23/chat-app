@@ -47,6 +47,8 @@ const Profile = () => {
 				}}
 			>
 				<img
+					height="auto"
+					width="auto"
 					src={photoURL}
 					alt={`Photo of ${currentUser.userName}`}
 					style={{
@@ -54,8 +56,11 @@ const Profile = () => {
 						height: "90px",
 						borderRadius: "50%",
 					}}
+					title={`Photo of ${currentUser.userName}`}
+					loading="eager"
+					referrerPolicy="no-referrer"
 				/>
-				<h2 style={{ fontSize: "1.2rem" }}>{currentUser.userName}</h2>
+				<h1 style={{ fontSize: "1.2rem" }}>{currentUser.userName}</h1>
 				<p style={{ fontSize: "0.9rem" }}>{currentUser.email}</p>
 			</div>
 			<div

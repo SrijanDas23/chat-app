@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { useSelector } from "react-redux";
+import Loading from "./Loading";
 
 const Chat = () => {
 	const [messages, setMessages] = useState([]);
@@ -25,9 +26,7 @@ const Chat = () => {
 	const { currentUser } = useSelector((state) => state.user);
 	const currentUserUid = currentUser?.userUid;
 	const otherUser = useSelector((state) => state.otherUser.otherUserInChat);
-	const photoURL = otherUser.photoURL
-		? otherUser.photoURL.slice(0, -6)
-		: "";
+	const photoURL = otherUser.photoURL ? otherUser.photoURL.slice(0, -6) : "";
 
 	const chatRoomId =
 		currentUserUid > otherUser.userUid
@@ -116,6 +115,7 @@ const Chat = () => {
 						height: "40px",
 						borderRadius: "50%",
 					}}
+					referrerPolicy="no-referrer"
 				/>
 				<h2 style={{ fontSize: "0.9rem" }}>{otherUser.userName}</h2>
 			</div>
@@ -124,17 +124,48 @@ const Chat = () => {
 				style={{
 					overflowY: "auto",
 					margin: "1rem",
+					flex: "1",
 				}}
 			>
 				{loading ? (
-					<p>Loading messages...</p>
+					<Loading />
+				) : messages.length === 0 ? (
+					<div
+						style={{
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							flexDirection: "column",
+						}}
+					>
+						<p style={{ marginTop: "3rem" }}>
+							This is the beginning of your message history with{" "}
+							{otherUser.userName}
+						</p>
+						<video
+							src="../../hi_animation.webm"
+							style={{ width: "12rem" }}
+							autoPlay
+							loop
+							muted
+							playsInline
+						></video>
+					</div>
 				) : (
 					messages.map((msg, index) => (
 						<div key={index}>
 							<div
 								key={index}
 								style={{
-									margin: "1rem",
+									marginTop:
+										index === 0
+											? "0"
+											: msg.senderId ===
+											  messages[index - 1]?.senderId
+											? "0.4rem"
+											: "1.5rem",
+									marginRight: "1rem",
+									marginLeft: "1rem",
 									display: "flex",
 									justifySelf:
 										msg.senderId === currentUserUid
@@ -144,9 +175,15 @@ const Chat = () => {
 							>
 								<div
 									style={{
-										background: "#7d56c669",
+										background:
+											msg.senderId === currentUserUid
+												? "#7d56c623"
+												: "#7d56c69c",
 										width: "fit-content",
-										borderRadius: "20px",
+										borderRadius:
+											msg.senderId === currentUserUid
+												? "20px 20px 0 20px"
+												: "20px 20px 20px 0",
 									}}
 								>
 									<p style={{ margin: "0.4rem 0.8rem" }}>

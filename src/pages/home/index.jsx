@@ -21,8 +21,28 @@ const Home = () => {
 			{otherUser ? (
 				<Chat />
 			) : (
-				<div style={{ padding: "2rem" }}>
-					Select a user to start chatting
+				<div
+					style={{
+						display: "flex",
+						flexDirection: "column",
+						justifyContent: "center",
+						alignItems: "center",
+						marginTop: "2rem",
+					}}
+				>
+					<p>Select a user to start chatting</p>
+					<img
+						height="auto"
+						width="auto"
+						src="../../../people_talking.png"
+						style={{
+							height: "15rem",
+							width: "15rem",
+						}}
+						alt="Image of people talking"
+						title="Image of people talking"
+						loading="eager"
+					/>
 				</div>
 			)}
 			<Profile />
