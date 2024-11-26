@@ -11,6 +11,7 @@ import {
 	query,
 } from "firebase/firestore";
 import { db } from "../utils/firebase";
+import { useToast } from "../context/ToastContext";
 
 const ChatShortcut = ({ otherUser, chatId }) => {
 	const [latestMessage, setLatestMessage] = useState(null);
@@ -24,6 +25,8 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 
 	const [isBlocked, setIsBlocked] = useState(false);
 	const [isOtherUserBlocked, setOtherUserBlocked] = useState(false);
+
+	const { showToast } = useToast();
 
 	useEffect(() => {
 		const checkBlockingStatus = async () => {
@@ -49,12 +52,18 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 
 				setIsBlocked(currentUserBlocked || otherUserBlocked);
 				setOtherUserBlocked(otherUserBlocked);
+				console.log("checking blocked users");
 			} catch (error) {
 				console.error("Error checking block status:", error);
+				showToast(`Error checking block status: ${error}!`);
 			}
 		};
 
-		checkBlockingStatus();
+		const intervalId = setInterval(() => {
+			checkBlockingStatus();
+		}, 6000);
+
+		return () => clearInterval(intervalId);
 	}, [otherUser]);
 
 	useEffect(() => {

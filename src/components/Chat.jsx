@@ -81,7 +81,11 @@ const Chat = () => {
 			}
 		};
 
-		checkBlockingStatus();
+		const intervalId = setInterval(() => {
+			checkBlockingStatus();
+		}, 2000);
+
+		return () => clearInterval(intervalId);
 	}, [currentUserUid, otherUser.userUid]);
 
 	useEffect(() => {

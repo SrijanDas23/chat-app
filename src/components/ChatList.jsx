@@ -3,12 +3,15 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { db } from "../utils/firebase";
 import ChatShortcut from "./ChatShortcut";
+import { useToast } from "../context/ToastContext";
 
 const ChatList = () => {
 	const [chats, setChats] = useState([]);
 	const [users, setUsers] = useState({});
 	const { currentUser } = useSelector((state) => state.user);
 	const currentUserUid = currentUser?.userUid;
+
+	const { showToast } = useToast();
 
 	useEffect(() => {
 		const fetchChats = async () => {
@@ -43,12 +46,17 @@ const ChatList = () => {
 				setChats(userChats);
 			} catch (error) {
 				console.error("Error fetching chats: ", error);
+				showToast(`Error checking block status: ${error}!`);
 			}
 		};
 
-		if (currentUserUid) {
-			fetchChats();
-		}
+		const intervalId = setInterval(() => {
+			if (currentUserUid) {
+				fetchChats();
+			}
+		}, 1000);
+
+		return () => clearInterval(intervalId);
 	}, [currentUserUid]);
 
 	return (

@@ -11,7 +11,6 @@ import { db } from "../utils/firebase";
 
 const Profile = () => {
 	const [isBlocked, setIsBlocked] = useState(false);
-	// const [isCurrentUserBlocked, setCurrentUserBlocked] = useState(false);
 	const [isOtherUserBlocked, setOtherUserBlocked] = useState(false);
 	const { currentUser } = useSelector((state) => state.user);
 	const otherUser = useSelector((state) => state.otherUser.otherUserInChat);
@@ -48,10 +47,10 @@ const Profile = () => {
 						.blockedUsers.includes(currentUser.userUid);
 
 				setIsBlocked(currentUserBlocked || otherUserBlocked);
-				// setCurrentUserBlocked(currentUserBlocked);
 				setOtherUserBlocked(otherUserBlocked);
 			} catch (error) {
 				console.error("Error checking block status:", error);
+				showToast(`Error checking block status: ${error}!`);
 			}
 		};
 
