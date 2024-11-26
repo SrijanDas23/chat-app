@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
 	doc,
 	setDoc,
@@ -10,12 +10,14 @@ import {
 import { useToast } from "../context/ToastContext";
 import { db } from "../utils/firebase";
 import { useState, useEffect } from "react";
+import { setOtherUserInChat } from "../redux/otherUser/otherUserSlice";
 
 const Block = () => {
 	const { currentUser } = useSelector((state) => state.user);
 	const otherUser = useSelector((state) => state.otherUser.otherUserInChat);
 	const { showToast } = useToast();
 	const [isBlocked, setIsBlocked] = useState(false);
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		const checkBlockedStatus = async () => {
@@ -56,6 +58,7 @@ const Block = () => {
 			}
 
 			setIsBlocked(true);
+			dispatch(setOtherUserInChat(null));
 			showToast(`Blocked ${otherUser.userName} successfully.`);
 		} catch (error) {
 			console.error("Error blocking user:", error);
@@ -74,6 +77,7 @@ const Block = () => {
 			});
 
 			setIsBlocked(false);
+			dispatch(setOtherUserInChat(null));
 			showToast(`Unblocked ${otherUser.userName} successfully.`);
 		} catch (error) {
 			console.error("Error unblocking user:", error);
