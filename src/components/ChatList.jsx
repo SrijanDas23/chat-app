@@ -67,7 +67,13 @@ const ChatList = () => {
 				const otherUserId = user1 === currentUserUid ? user2 : user1;
 				const otherUser = users[otherUserId];
 
-				return <ChatShortcut key={index} otherUser={otherUser} chatId={chatId} />;
+				return (
+					<ChatShortcut
+						key={index}
+						otherUser={otherUser}
+						chatId={chatId}
+					/>
+				);
 			})}
 		</div>
 	);

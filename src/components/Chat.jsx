@@ -24,16 +24,18 @@ const Chat = () => {
 	const [loading, setLoading] = useState(true);
 	const dummy = useRef(null);
 	const [changeInMessage, setChangeInMessage] = useState(0);
-	const [isBlocked, setIsBlocked] = useState(false);
 	const dispatch = useDispatch();
 	const [showTooltip, setShowTooltip] = useState(false);
+
+	const [isBlocked, setIsBlocked] = useState(false);
+	// const [isCurrentUserBlocked, setCurrentUserBlocked] = useState(false);
+	const [isOtherUserBlocked, setOtherUserBlocked] = useState(false);
 
 	// eslint-disable-next-line no-unused-vars
 	const auth = getAuth();
 	const { currentUser } = useSelector((state) => state.user);
 	const currentUserUid = currentUser?.userUid;
 	const otherUser = useSelector((state) => state.otherUser.otherUserInChat);
-	const photoURL = otherUser.photoURL ? otherUser.photoURL.slice(0, -6) : "";
 
 	const chatRoomId =
 		currentUserUid > otherUser.userUid
@@ -50,7 +52,6 @@ const Chat = () => {
 	}, [chatRoomId, currentDraft]);
 
 	useEffect(() => {
-		// Check if either user has blocked the other
 		const checkBlockingStatus = async () => {
 			try {
 				const currentUserBlockDoc = await getDoc(
@@ -73,6 +74,8 @@ const Chat = () => {
 						.blockedUsers.includes(currentUserUid);
 
 				setIsBlocked(currentUserBlocked || otherUserBlocked);
+				// setCurrentUserBlocked(currentUserBlocked);
+				setOtherUserBlocked(otherUserBlocked);
 			} catch (error) {
 				console.error("Error checking block status:", error);
 			}
@@ -125,7 +128,7 @@ const Chat = () => {
 
 			setTimeout(() => {
 				setMessages(messagesData);
-				console.log(messages);
+				// console.log(messages);
 				setLoading(false);
 			}, 300);
 		});
@@ -157,6 +160,19 @@ const Chat = () => {
 		}
 	};
 
+	const defaultAvatar = "../../avatar.jpg";
+	const photoURL = isBlocked
+		? defaultAvatar
+		: otherUser.photoURL
+		? otherUser.photoURL.slice(0, -6)
+		: defaultAvatar;
+
+	const userName = isBlocked
+		? isOtherUserBlocked
+			? "Another User"
+			: otherUser.userName
+		: otherUser.userName;
+
 	return (
 		<div
 			style={{
@@ -187,7 +203,7 @@ const Chat = () => {
 				</div>
 				<img
 					src={photoURL}
-					alt={otherUser.userName}
+					alt={userName}
 					style={{
 						width: "40px",
 						height: "40px",
@@ -195,7 +211,7 @@ const Chat = () => {
 					}}
 					referrerPolicy="no-referrer"
 				/>
-				<h2 style={{ fontSize: "0.9rem" }}>{otherUser.userName}</h2>
+				<h2 style={{ fontSize: "0.9rem" }}>{userName}</h2>
 			</div>
 
 			<div
@@ -218,7 +234,7 @@ const Chat = () => {
 					>
 						<p style={{ marginTop: "3rem" }}>
 							This is the beginning of your message history with{" "}
-							{otherUser.userName}
+							{userName}
 						</p>
 						<video
 							src="../../hi_animation.webm"

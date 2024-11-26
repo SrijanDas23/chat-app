@@ -11,52 +11,74 @@ import { db } from "../utils/firebase";
 
 const Profile = () => {
 	const [isBlocked, setIsBlocked] = useState(false);
+	// const [isCurrentUserBlocked, setCurrentUserBlocked] = useState(false);
+	const [isOtherUserBlocked, setOtherUserBlocked] = useState(false);
 	const { currentUser } = useSelector((state) => state.user);
 	const otherUser = useSelector((state) => state.otherUser.otherUserInChat);
 	console.log(currentUser);
-	console.log(currentUser.photoURL);
+	console.log(otherUser);
 	const [showTooltip, setShowTooltip] = useState(null);
 	const { showToast } = useToast();
 
 	const user = otherUser || currentUser;
-	const userName = user.userName;
-	const userUid = user.userUid;
 	const email = otherUser ? "" : currentUser.email;
 
 	const defaultAvatar = "../../avatar.jpg";
 
 	useEffect(() => {
-		const checkIfBlocked = async () => {
-			if (!currentUser || !otherUser) return;
-
+		const checkBlockingStatus = async () => {
 			try {
-				const blockerDocRef = doc(db, "blocked", currentUser.userUid);
-				const blockerDocSnap = await getDoc(blockerDocRef);
+				const currentUserBlockDoc = await getDoc(
+					doc(db, "blocked", currentUser.userUid)
+				);
+				const otherUserBlockDoc = await getDoc(
+					doc(db, "blocked", otherUser.userUid)
+				);
 
-				if (blockerDocSnap.exists()) {
-					const blockedUsers =
-						blockerDocSnap.data().blockedUsers || [];
-					if (blockedUsers.includes(otherUser.userUid)) {
-						setIsBlocked(true);
-					} else {
-						setIsBlocked(false);
-					}
-				} else {
-					setIsBlocked(false);
-				}
+				const currentUserBlocked =
+					currentUserBlockDoc.exists() &&
+					currentUserBlockDoc
+						.data()
+						.blockedUsers.includes(otherUser.userUid);
+
+				const otherUserBlocked =
+					otherUserBlockDoc.exists() &&
+					otherUserBlockDoc
+						.data()
+						.blockedUsers.includes(currentUser.userUid);
+
+				setIsBlocked(currentUserBlocked || otherUserBlocked);
+				// setCurrentUserBlocked(currentUserBlocked);
+				setOtherUserBlocked(otherUserBlocked);
 			} catch (error) {
-				console.error("Error checking if user is blocked:", error);
+				console.error("Error checking block status:", error);
 			}
 		};
 
-		checkIfBlocked();
-	}, [currentUser, otherUser]);
+		checkBlockingStatus();
+	}, [otherUser]);
+
+	// console.log("currentUserBlocked: " + isCurrentUserBlocked);
+	// console.log("otherUserBlocked: " + isOtherUserBlocked);
+	// console.log("isBlocked: " + isBlocked);
 
 	const photoURL = isBlocked
 		? defaultAvatar
 		: user.photoURL
 		? user.photoURL.slice(0, -6)
 		: defaultAvatar;
+
+	const userName = isBlocked
+		? isOtherUserBlocked
+			? "Another User"
+			: user.userName
+		: user.userName;
+
+	const userUid = isBlocked
+		? isOtherUserBlocked
+			? "XXXXXXXX"
+			: user.userUid
+		: user.userUid;
 
 	const copyToClipboard = () => {
 		navigator.clipboard

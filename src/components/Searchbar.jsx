@@ -1,5 +1,12 @@
 /* eslint-disable no-unused-vars */
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+	collection,
+	doc,
+	getDoc,
+	getDocs,
+	query,
+	where,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../utils/firebase";
 import { getAuth } from "firebase/auth";
@@ -36,30 +43,47 @@ const Searchbar = () => {
 				where("userName", "<=", term + "\uf8ff")
 			);
 
-			const [uidSnapshot, nameSnapshot] = await Promise.all([
-				getDocs(uidQuery),
-				getDocs(nameQuery),
-			]);
+			const [uidSnapshot, nameSnapshot, currentUserBlockDoc] =
+				await Promise.all([
+					getDocs(uidQuery),
+					getDocs(nameQuery),
+					getDoc(doc(db, "blocked", auth.currentUser.uid)),
+				]);
 
-			const uidResults = uidSnapshot.docs.map((doc) => ({
-				id: doc.id,
-				...doc.data(),
-			}));
+			const currentUserBlockedUsers = currentUserBlockDoc.exists()
+				? currentUserBlockDoc.data().blockedUsers || []
+				: [];
 
-			const nameResults = nameSnapshot.docs.map((doc) => ({
-				id: doc.id,
-				...doc.data(),
-			}));
+			const allResults = [
+				...uidSnapshot.docs.map((doc) => ({
+					id: doc.id,
+					...doc.data(),
+				})),
+				...nameSnapshot.docs.map((doc) => ({
+					id: doc.id,
+					...doc.data(),
+				})),
+			];
 
-			const allResults = [...uidResults, ...nameResults];
-			const uniqueResults = allResults.filter(
-				(user, index, self) =>
-					index === self.findIndex((u) => u.id === user.id) &&
-					user.userUid !== auth.currentUser.uid
-			);
+			const filteredResults = [];
+			for (const user of allResults) {
+				if (user.userUid === auth.currentUser.uid) continue;
+				if (currentUserBlockedUsers.includes(user.userUid)) continue;
 
-			setResults(uniqueResults);
-			console.log(uniqueResults);
+				const otherUserBlockDoc = await getDoc(
+					doc(db, "blocked", user.userUid)
+				);
+				const otherUserBlockedUsers = otherUserBlockDoc.exists()
+					? otherUserBlockDoc.data().blockedUsers || []
+					: [];
+
+				if (!otherUserBlockedUsers.includes(auth.currentUser.uid)) {
+					filteredResults.push(user);
+				}
+			}
+
+			setResults(filteredResults);
+			console.log(filteredResults);
 		} catch (error) {
 			console.error("Error searching users:", error);
 		} finally {

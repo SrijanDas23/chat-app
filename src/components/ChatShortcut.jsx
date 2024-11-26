@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import {
 	collection,
 	doc,
+	getDoc,
 	onSnapshot,
 	orderBy,
 	query,
@@ -20,6 +21,41 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 	const draftMessage = drafts[chatId];
 	const chatRef = doc(db, "chats", chatId);
 	const textRef = collection(chatRef, "messages");
+
+	const [isBlocked, setIsBlocked] = useState(false);
+	const [isOtherUserBlocked, setOtherUserBlocked] = useState(false);
+
+	useEffect(() => {
+		const checkBlockingStatus = async () => {
+			try {
+				const currentUserBlockDoc = await getDoc(
+					doc(db, "blocked", currentUser.userUid)
+				);
+				const otherUserBlockDoc = await getDoc(
+					doc(db, "blocked", otherUser.userUid)
+				);
+
+				const currentUserBlocked =
+					currentUserBlockDoc.exists() &&
+					currentUserBlockDoc
+						.data()
+						.blockedUsers.includes(otherUser.userUid);
+
+				const otherUserBlocked =
+					otherUserBlockDoc.exists() &&
+					otherUserBlockDoc
+						.data()
+						.blockedUsers.includes(currentUser.userUid);
+
+				setIsBlocked(currentUserBlocked || otherUserBlocked);
+				setOtherUserBlocked(otherUserBlocked);
+			} catch (error) {
+				console.error("Error checking block status:", error);
+			}
+		};
+
+		checkBlockingStatus();
+	}, [otherUser]);
 
 	useEffect(() => {
 		const q = query(textRef, orderBy("timestamp", "asc"));
@@ -55,6 +91,20 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 		dispatch(setOtherUserInChat(user));
 		console.log("Selected User:", user);
 	};
+
+	const defaultAvatar = "../../avatar.jpg";
+	const photoURL = isBlocked
+		? defaultAvatar
+		: otherUser.photoURL
+		? otherUser.photoURL.slice(0, -6)
+		: defaultAvatar;
+
+	const userName = isBlocked
+		? isOtherUserBlocked
+			? "Another User"
+			: otherUser.userName
+		: otherUser.userName;
+
 	return (
 		<div
 			style={{
@@ -71,13 +121,9 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 			<img
 				height="auto"
 				width="auto"
-				src={
-					otherUser?.photoURL
-						? otherUser.photoURL.slice(0, -6)
-						: "../../public/avatar.jpg"
-				}
-				alt={otherUser?.userName || "Avatar"}
-				title={otherUser?.userName || "Avatar"}
+				src={photoURL}
+				alt={userName || "Avatar"}
+				title={userName || "Avatar"}
 				style={{
 					width: "40px",
 					height: "40px",
@@ -98,7 +144,7 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 						fontSize: "0.9rem",
 					}}
 				>
-					{otherUser?.userName || "Unknown User"}
+					{userName || "Unknown User"}
 				</h2>
 				<p
 					style={{
@@ -117,7 +163,7 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 								latestMessage?.senderId === currentUser.userUid
 									? "You: "
 									: ""
-							}${latestMessage?.content}`
+						  }${latestMessage?.content}`
 						: "No messages yet"}
 				</p>
 			</div>
