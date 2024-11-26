@@ -26,6 +26,11 @@ const Profile = () => {
 
 	useEffect(() => {
 		const checkBlockingStatus = async () => {
+			if (!otherUser) {
+				setIsBlocked(false);
+				setOtherUserBlocked(false);
+				return;
+			}
 			try {
 				const currentUserBlockDoc = await getDoc(
 					doc(db, "blocked", currentUser.userUid)

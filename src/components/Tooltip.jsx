@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-const Tooltip = ({ message, top }) => {
+const Tooltip = ({ message, top = "-40px" }) => {
 	return (
 		<div>
 			<div
@@ -26,10 +26,6 @@ const Tooltip = ({ message, top }) => {
 Tooltip.propTypes = {
 	message: PropTypes.string.isRequired,
 	top: PropTypes.string,
-};
-
-Tooltip.defaultProps = {
-	top: "-40px",
 };
 
 export default Tooltip;

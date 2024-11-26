@@ -61,7 +61,7 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 
 		const intervalId = setInterval(() => {
 			checkBlockingStatus();
-		}, 6000);
+		}, 1000);
 
 		return () => clearInterval(intervalId);
 	}, [otherUser]);
