@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.3.0",
+    "chat-app": "file:",
     "firebase": "^11.0.2",
     "firestore": "^1.1.6",
     "prop-types": "^15.8.1",

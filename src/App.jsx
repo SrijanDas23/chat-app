@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
 import PrivateRoute from "./components/PrivateRoute";
 import Toast from "./components/Toast";
-import Home from "./pages/Home";
-import OtherProfile from "./pages/OtherProfile";
 import SmallerScreens from "./components/SmallerScreens";
+import Login from "./pages/Login/Login";
+import Home from "./pages/home/Home";
+import OtherProfile from "./pages/OtherProfile/OtherProfile";
 
 function App() {
 	return (
