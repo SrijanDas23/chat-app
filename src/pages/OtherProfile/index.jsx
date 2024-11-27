@@ -1,31 +1,35 @@
-import { useSelector } from "react-redux";
-import OAuth from "./OAuth";
-import { RxInfoCircled } from "react-icons/rx";
-import { PiCopy } from "react-icons/pi";
 import { useEffect, useState } from "react";
-import { useToast } from "../context/ToastContext";
-import Tooltip from "./Tooltip";
-import Block from "./Block";
+import { useDispatch, useSelector } from "react-redux";
+import { useToast } from "../../context/ToastContext";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../utils/firebase";
+import { db } from "../../utils/firebase";
 import { TiArrowBack } from "react-icons/ti";
-import PropTypes from "prop-types";
+import { RxInfoCircled } from "react-icons/rx";
+import Tooltip from "../../components/Tooltip";
+import { PiCopy } from "react-icons/pi";
+import { useNavigate, useParams } from "react-router-dom";
+import { getAuth } from "firebase/auth";
+import Loading from "../../components/Loading";
+import MobileBlock from "./MobileBlock";
+import { setOtherUserInChat } from "../../redux/otherUser/otherUserSlice";
 
-const Profile = ({ onBack }) => {
+const OtherProfile = () => {
 	const [isBlocked, setIsBlocked] = useState(false);
 	const [isOtherUserBlocked, setOtherUserBlocked] = useState(false);
 	const { currentUser } = useSelector((state) => state.user);
-	const otherUser = useSelector((state) => state.otherUser.otherUserInChat);
-	console.log(currentUser);
-	console.log(otherUser);
 	const [showTooltip, setShowTooltip] = useState(null);
 	const { showToast } = useToast();
+	const { userUid } = useParams();
+	// eslint-disable-next-line no-unused-vars
+	const auth = getAuth();
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
-	const user = otherUser || currentUser;
-	const email = otherUser ? "" : currentUser.email;
+	const [user, setUser] = useState(null);
+	console.log("user:", user);
+	const [loading, setLoading] = useState(true);
 
-	const defaultAvatar = "../../avatar.jpg";
-
+	const defaultAvatar = "../../../avatar.jpg";
 	const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1000);
 
 	useEffect(() => {
@@ -38,8 +42,24 @@ const Profile = ({ onBack }) => {
 	}, []);
 
 	useEffect(() => {
+		const fetchUser = async () => {
+			try {
+				const userDoc = await getDoc(doc(db, "users", userUid));
+				if (userDoc.exists()) {
+					setUser(userDoc.data());
+				} else {
+					showToast("User not found!");
+				}
+			} catch (error) {
+				console.error("Error fetching user:", error);
+				showToast(`Error fetching user: ${error}`);
+			} finally {
+				setLoading(false);
+			}
+		};
+
 		const checkBlockingStatus = async () => {
-			if (!otherUser) {
+			if (!user) {
 				setIsBlocked(false);
 				setOtherUserBlocked(false);
 				return;
@@ -49,14 +69,12 @@ const Profile = ({ onBack }) => {
 					doc(db, "blocked", currentUser.userUid)
 				);
 				const otherUserBlockDoc = await getDoc(
-					doc(db, "blocked", otherUser.userUid)
+					doc(db, "blocked", user.userUid)
 				);
 
 				const currentUserBlocked =
 					currentUserBlockDoc.exists() &&
-					currentUserBlockDoc
-						.data()
-						.blockedUsers.includes(otherUser.userUid);
+					currentUserBlockDoc.data().blockedUsers.includes(userUid);
 
 				const otherUserBlocked =
 					otherUserBlockDoc.exists() &&
@@ -71,31 +89,32 @@ const Profile = ({ onBack }) => {
 				showToast(`Error checking block status: ${error}!`);
 			}
 		};
+		const intervalId = setInterval(() => {
+			fetchUser();
+			checkBlockingStatus();
+		}, 1500);
 
-		checkBlockingStatus();
-	}, [otherUser]);
+		return () => clearInterval(intervalId);
+	}, [userUid, currentUser, user]);
 
-	// console.log("currentUserBlocked: " + isCurrentUserBlocked);
-	// console.log("otherUserBlocked: " + isOtherUserBlocked);
-	// console.log("isBlocked: " + isBlocked);
+	console.log("otherUserBlocked: " + isOtherUserBlocked);
+	console.log("isBlocked: " + isBlocked);
 
-	const photoURL = isBlocked
-		? defaultAvatar
-		: user.photoURL
-		? user.photoURL.slice(0, -6)
+	const photoURL = user
+		? isBlocked
+			? defaultAvatar
+			: user.photoURL
+			? user.photoURL.slice(0, -6)
+			: defaultAvatar
 		: defaultAvatar;
 
-	const userName = isBlocked
-		? isOtherUserBlocked
-			? "Another User"
+	const userName = user
+		? isBlocked
+			? isOtherUserBlocked
+				? "Another User"
+				: user.userName
 			: user.userName
-		: user.userName;
-
-	const userUid = isBlocked
-		? isOtherUserBlocked
-			? "XXXXXXXX"
-			: user.userUid
-		: user.userUid;
+		: "Loading...";
 
 	const copyToClipboard = () => {
 		navigator.clipboard
@@ -107,18 +126,26 @@ const Profile = ({ onBack }) => {
 				console.error("Failed to copy text: ", err);
 			});
 	};
+
+	function handleGoBack() {
+		navigate("/");
+		dispatch(setOtherUserInChat(user));
+	}
+
+	if (loading) {
+		return <Loading />;
+	}
+
 	return (
 		<div
 			style={{
 				display: "flex",
 				flexDirection: "column",
-				borderRadius: isMobileView ? "0" : "20px",
 				backgroundColor: "rgba(0, 0, 0, 0.14)",
-				maxHeight: isMobileView ? "100vh" : "80vh",
-				height: isMobileView ? "100vh" : "auto",
+				height: "100vh",
 				alignItems: "center",
 				justifyContent: "space-around",
-				padding: isMobileView ? "0" : "0 1rem",
+				width: "100vw",
 			}}
 		>
 			{isMobileView && (
@@ -132,7 +159,7 @@ const Profile = ({ onBack }) => {
 						left: "1.5rem",
 						zIndex: "100",
 					}}
-					onClick={onBack}
+					onClick={handleGoBack}
 				/>
 			)}
 			<div
@@ -161,9 +188,6 @@ const Profile = ({ onBack }) => {
 				<h1 style={{ fontSize: isMobileView ? "1.5rem" : "1.2rem" }}>
 					{userName}
 				</h1>
-				<p style={{ fontSize: isMobileView ? "1rem" : "0.9rem" }}>
-					{email}
-				</p>
 			</div>
 			<div
 				style={{
@@ -210,7 +234,6 @@ const Profile = ({ onBack }) => {
 					}}
 				>
 					<p>{userUid}</p>
-
 					<div
 						style={{ position: "relative", cursor: "pointer" }}
 						onMouseEnter={() => setShowTooltip("copy")}
@@ -235,14 +258,10 @@ const Profile = ({ onBack }) => {
 					alignItems: "center",
 				}}
 			>
-				{!otherUser ? <OAuth /> : <Block />}
+				<MobileBlock user={user} />
 			</div>
 		</div>
 	);
 };
 
-Profile.propTypes = {
-	onBack: PropTypes.func,
-};
-
-export default Profile;
+export default OtherProfile;

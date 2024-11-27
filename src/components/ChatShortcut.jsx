@@ -61,7 +61,7 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 
 		const intervalId = setInterval(() => {
 			checkBlockingStatus();
-		}, 1000);
+		}, 300);
 
 		return () => clearInterval(intervalId);
 	}, [otherUser]);
@@ -89,7 +89,7 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 				setTimeout(() => {
 					setLatestMessage(lastMessage);
 					// console.log(lastMessage);
-				}, 600);
+				}, 300);
 			}
 		});
 

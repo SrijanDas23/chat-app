@@ -47,6 +47,17 @@ const Chat = () => {
 	const drafts = useSelector((state) => state.drafts);
 	const currentDraft = drafts[chatRoomId] || "";
 
+	const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1000);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobileView(window.innerWidth < 1000);
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
 	useEffect(() => {
 		setNewMessage(currentDraft || "");
 	}, [chatRoomId, currentDraft]);
@@ -180,7 +191,7 @@ const Chat = () => {
 	return (
 		<div
 			style={{
-				maxHeight: "80vh",
+				height: isMobileView ? "100vh" : "80vh",
 				display: "flex",
 				flexDirection: "column",
 			}}
@@ -212,8 +223,14 @@ const Chat = () => {
 						width: "40px",
 						height: "40px",
 						borderRadius: "50%",
+						cursor: isMobileView ? "pointer" : "default",
 					}}
 					referrerPolicy="no-referrer"
+					onClick={() => {
+						if (isMobileView) {
+							window.location.href = `/otherprofile/${otherUser.userUid}`;
+						}
+					}}
 				/>
 				<h2 style={{ fontSize: "0.9rem" }}>{userName}</h2>
 			</div>

@@ -13,6 +13,17 @@ const ChatList = () => {
 
 	const { showToast } = useToast();
 
+	const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1000);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobileView(window.innerWidth < 1000);
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
 	useEffect(() => {
 		const fetchChats = async () => {
 			try {
@@ -54,7 +65,7 @@ const ChatList = () => {
 			if (currentUserUid) {
 				fetchChats();
 			}
-		}, 1000);
+		}, 300);
 
 		return () => clearInterval(intervalId);
 	}, [currentUserUid]);
@@ -67,7 +78,7 @@ const ChatList = () => {
 				paddingTop: "0",
 				overflowY: "auto",
 				marginBottom: "1rem",
-				height: "85vh",
+				height: isMobileView ? "95vh" : "85vh",
 			}}
 		>
 			{chats.map((chatId, index) => {

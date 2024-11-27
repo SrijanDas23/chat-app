@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-	otherUserInChat: null, // Default value
+	otherUserInChat: null,
 };
 
 const otherUserSlice = createSlice({

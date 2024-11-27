@@ -21,6 +21,17 @@ const Searchbar = () => {
 
 	const auth = getAuth();
 
+	const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1000);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobileView(window.innerWidth < 1000);
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
 	const handleSearch = async (term) => {
 		if (!term.trim()) {
 			setResults([]);
@@ -108,8 +119,9 @@ const Searchbar = () => {
 	return (
 		<div
 			style={{
-				borderRadius: "20px",
+				borderRadius: "20px 20px",
 				backgroundColor: "rgba(0, 0, 0, 0.14)",
+				flex:"1"
 			}}
 		>
 			<input
@@ -120,10 +132,11 @@ const Searchbar = () => {
 				style={{
 					border: "1.5px solid #7e56c6",
 					backgroundColor: "transparent",
-					width: "13rem",
+					width: isMobileView ? "100%" : "13rem",
 					borderRadius: "20px",
-					padding: "0.5rem",
+					padding: isMobileView ? "0.5rem 0" : "0.5rem",
 					outline: "none",
+					textIndent: isMobileView ? "1rem" : "0",
 				}}
 			/>
 			{loading && (
