@@ -22,6 +22,7 @@ import { setOtherUserInChat } from "../redux/otherUser/otherUserSlice";
 import Tooltip from "./Tooltip";
 import { MdDelete } from "react-icons/md";
 import { useToast } from "../context/ToastContext";
+import DeleteModal from "./DeleteModal";
 
 const Chat = () => {
 	const [messages, setMessages] = useState([]);
@@ -52,6 +53,8 @@ const Chat = () => {
 
 	const drafts = useSelector((state) => state.drafts);
 	const currentDraft = drafts[chatRoomId] || "";
+
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1000);
 
@@ -296,10 +299,11 @@ const Chat = () => {
 						cursor: "pointer",
 						position: "relative",
 					}}
+					onClick={() => setIsModalOpen(true)}
 					onMouseEnter={() => setShowTooltip("delete")}
 					onMouseLeave={() => setShowTooltip(null)}
 				>
-					<MdDelete size={20} onClick={handleDelete} />
+					<MdDelete size={20} />
 					{showTooltip === "delete" && (
 						<Tooltip
 							message="Delete the entire chat"
@@ -308,6 +312,51 @@ const Chat = () => {
 						/>
 					)}
 				</div>
+
+				{isModalOpen && (
+					<DeleteModal onClose={() => setIsModalOpen(false)}>
+						<h3>Confirm Deletion</h3>
+						<p>Are you sure you want to delete the entire chat?</p>
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "flex-end",
+								marginTop: "1rem",
+							}}
+						>
+							<button
+								style={{
+									marginRight: "1rem",
+									backgroundColor: "#7e56c6",
+									color: "#fff",
+									border: "none",
+									borderRadius: "20px",
+									padding: "0.5rem 1rem",
+									cursor: "pointer",
+								}}
+								onClick={() => {
+									handleDelete();
+									setIsModalOpen(false);
+								}}
+							>
+								Delete
+							</button>
+							<button
+								style={{
+									backgroundColor: "#ccc",
+									color: "#333",
+									border: "none",
+									borderRadius: "20px",
+									padding: "0.5rem 1rem",
+									cursor: "pointer",
+								}}
+								onClick={() => setIsModalOpen(false)}
+							>
+								Cancel
+							</button>
+						</div>
+					</DeleteModal>
+				)}
 			</div>
 
 			<div
