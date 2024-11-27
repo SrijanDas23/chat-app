@@ -49,6 +49,7 @@ const OtherProfile = () => {
 					setUser(userDoc.data());
 				} else {
 					showToast("User not found!");
+					navigate("/");
 				}
 			} catch (error) {
 				console.error("Error fetching user:", error);
