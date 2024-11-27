@@ -1,0 +1,3 @@
+https://chatt-app23.netlify.app/
+https://chatt-app23.netlify.app/login
+https://chatt-app23.netlify.app/otherprofile/<userUid>
