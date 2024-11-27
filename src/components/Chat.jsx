@@ -257,6 +257,8 @@ const Chat = () => {
 						)}
 					</div>
 					<img
+						width="auto"
+						height="auto"
 						src={photoURL}
 						alt={userName}
 						style={{
@@ -271,6 +273,8 @@ const Chat = () => {
 								window.location.href = `/otherprofile/${otherUser.userUid}`;
 							}
 						}}
+						loading="eager"
+						title={userName}
 					/>
 					<h2
 						style={{
