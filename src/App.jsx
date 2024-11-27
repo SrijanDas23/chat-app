@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
 import Toast from "./components/Toast";
 import SmallerScreens from "./components/SmallerScreens";
@@ -21,6 +21,7 @@ function App() {
 						/>
 					</Route>
 				</Route>
+				<Route path="*" element={<Navigate to="/" />} />
 			</Routes>
 			<Toast />
 		</BrowserRouter>
