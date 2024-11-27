@@ -1,12 +1,12 @@
 import PropTypes from "prop-types";
-const Tooltip = ({ message, top = "-40px" }) => {
+const Tooltip = ({ message, top = "-40px", left = "50%" }) => {
 	return (
 		<div>
 			<div
 				style={{
 					position: "absolute",
 					top: top,
-					left: "50%",
+					left: left,
 					transform: "translateX(-50%)",
 					backgroundColor: "#24063dc3",
 					color: "white",
@@ -26,6 +26,7 @@ const Tooltip = ({ message, top = "-40px" }) => {
 Tooltip.propTypes = {
 	message: PropTypes.string.isRequired,
 	top: PropTypes.string,
+	left: PropTypes.string,
 };
 
 export default Tooltip;

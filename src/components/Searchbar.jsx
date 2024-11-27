@@ -54,47 +54,26 @@ const Searchbar = () => {
 				where("userName", "<=", term + "\uf8ff")
 			);
 
-			const [uidSnapshot, nameSnapshot, currentUserBlockDoc] =
-				await Promise.all([
-					getDocs(uidQuery),
-					getDocs(nameQuery),
-					getDoc(doc(db, "blocked", auth.currentUser.uid)),
-				]);
-
-			const currentUserBlockedUsers = currentUserBlockDoc.exists()
-				? currentUserBlockDoc.data().blockedUsers || []
-				: [];
-
-			const allResults = [
-				...uidSnapshot.docs.map((doc) => ({
-					id: doc.id,
-					...doc.data(),
-				})),
-				...nameSnapshot.docs.map((doc) => ({
-					id: doc.id,
-					...doc.data(),
-				})),
-			];
-
-			const filteredResults = [];
-			for (const user of allResults) {
-				if (user.userUid === auth.currentUser.uid) continue;
-				if (currentUserBlockedUsers.includes(user.userUid)) continue;
-
-				const otherUserBlockDoc = await getDoc(
-					doc(db, "blocked", user.userUid)
-				);
-				const otherUserBlockedUsers = otherUserBlockDoc.exists()
-					? otherUserBlockDoc.data().blockedUsers || []
-					: [];
-
-				if (!otherUserBlockedUsers.includes(auth.currentUser.uid)) {
-					filteredResults.push(user);
-				}
-			}
-
-			setResults(filteredResults);
-			console.log(filteredResults);
+			const [uidSnapshot, nameSnapshot] = await Promise.all([
+				getDocs(uidQuery),
+				getDocs(nameQuery),
+			]);
+			const uidResults = uidSnapshot.docs.map((doc) => ({
+				id: doc.id,
+				...doc.data(),
+			}));
+			const nameResults = nameSnapshot.docs.map((doc) => ({
+				id: doc.id,
+				...doc.data(),
+			}));
+			const allResults = [...uidResults, ...nameResults];
+			const uniqueResults = allResults.filter(
+				(user, index, self) =>
+					index === self.findIndex((u) => u.id === user.id) &&
+					user.userUid !== auth.currentUser.uid
+			);
+			setResults(uniqueResults);
+			console.log(uniqueResults);
 		} catch (error) {
 			console.error("Error searching users:", error);
 		} finally {

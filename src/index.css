@@ -82,6 +82,10 @@ button:focus-visible {
 	background-color: #7d56c647;
 }
 
+.delete:hover{
+	background-color: #7d56c647;
+}
+
 @media (prefers-color-scheme: light) {
 	:root {
 		color: #213547;

@@ -3,12 +3,15 @@ import { db } from "../utils/firebase";
 import {
 	addDoc,
 	collection,
+	deleteDoc,
 	doc,
 	getDoc,
+	getDocs,
 	onSnapshot,
 	orderBy,
 	query,
 	setDoc,
+	writeBatch,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,6 +20,8 @@ import { clearDraft, saveDraft } from "../redux/drafts/draftsSlice";
 import { TiArrowBack } from "react-icons/ti";
 import { setOtherUserInChat } from "../redux/otherUser/otherUserSlice";
 import Tooltip from "./Tooltip";
+import { MdDelete } from "react-icons/md";
+import { useToast } from "../context/ToastContext";
 
 const Chat = () => {
 	const [messages, setMessages] = useState([]);
@@ -25,7 +30,8 @@ const Chat = () => {
 	const dummy = useRef(null);
 	const [changeInMessage, setChangeInMessage] = useState(0);
 	const dispatch = useDispatch();
-	const [showTooltip, setShowTooltip] = useState(false);
+	const [showTooltip, setShowTooltip] = useState(null);
+	const { showToast } = useToast();
 
 	const [isBlocked, setIsBlocked] = useState(false);
 	// const [isCurrentUserBlocked, setCurrentUserBlocked] = useState(false);
@@ -188,6 +194,28 @@ const Chat = () => {
 			: otherUser.userName
 		: otherUser.userName;
 
+	const handleDelete = async () => {
+		try {
+			const batch = writeBatch(db);
+			const messagesQuerySnapshot = await getDocs(messagesRef);
+
+			dispatch(clearDraft({ chatRoomId }));
+			dispatch(setOtherUserInChat(null));
+			messagesQuerySnapshot.forEach((messageDoc) => {
+				batch.delete(messageDoc.ref);
+			});
+
+			await batch.commit();
+
+			await deleteDoc(chatRoomRef);
+
+			showToast("Chat room deleted successfully");
+		} catch (error) {
+			console.error("Error deleting chat room", error);
+			showToast("Error deleting chat room");
+		}
+	};
+
 	return (
 		<div
 			style={{
@@ -200,39 +228,86 @@ const Chat = () => {
 				style={{
 					display: "flex",
 					alignItems: "center",
-					gap: "1rem",
 					margin: "1rem",
+					justifyContent: "space-between",
 				}}
 			>
 				<div
-					style={{ position: "relative", cursor: "pointer" }}
-					onMouseEnter={() => setShowTooltip(true)}
-					onMouseLeave={() => setShowTooltip(false)}
-					onClick={() => dispatch(setOtherUserInChat(null))}
+					style={{
+						display: "flex",
+						alignItems: "center",
+						gap: "1rem",
+					}}
 				>
-					<TiArrowBack
-						size={25}
-						style={{ cursor: "pointer", marginLeft: "-0.6rem" }}
+					<div
+						style={{ position: "relative", cursor: "pointer" }}
+						onMouseEnter={() => setShowTooltip("back")}
+						onMouseLeave={() => setShowTooltip(null)}
+						onClick={() => dispatch(setOtherUserInChat(null))}
+					>
+						<TiArrowBack
+							size={25}
+							style={{ cursor: "pointer", marginLeft: "-0.6rem" }}
+						/>
+						{showTooltip === "back" && (
+							<Tooltip message="Go back" top="-30px" />
+						)}
+					</div>
+					<img
+						src={photoURL}
+						alt={userName}
+						style={{
+							width: "40px",
+							height: "40px",
+							borderRadius: "50%",
+							cursor: isMobileView ? "pointer" : "default",
+						}}
+						referrerPolicy="no-referrer"
+						onClick={() => {
+							if (isMobileView) {
+								window.location.href = `/otherprofile/${otherUser.userUid}`;
+							}
+						}}
 					/>
-					{showTooltip && <Tooltip message="Go back" top="-30px" />}
+					<h2
+						style={{
+							fontSize: "0.9rem",
+							cursor: isMobileView ? "pointer" : "default",
+						}}
+						onClick={() => {
+							if (isMobileView) {
+								window.location.href = `/otherprofile/${otherUser.userUid}`;
+							}
+						}}
+					>
+						{userName}
+					</h2>
 				</div>
-				<img
-					src={photoURL}
-					alt={userName}
+				<div
+					className="delete"
 					style={{
 						width: "40px",
 						height: "40px",
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center",
 						borderRadius: "50%",
-						cursor: isMobileView ? "pointer" : "default",
+						transition: "background-color ease 0.3s",
+						cursor: "pointer",
+						position: "relative",
 					}}
-					referrerPolicy="no-referrer"
-					onClick={() => {
-						if (isMobileView) {
-							window.location.href = `/otherprofile/${otherUser.userUid}`;
-						}
-					}}
-				/>
-				<h2 style={{ fontSize: "0.9rem" }}>{userName}</h2>
+					onMouseEnter={() => setShowTooltip("delete")}
+					onMouseLeave={() => setShowTooltip(null)}
+				>
+					<MdDelete size={20} onClick={handleDelete} />
+					{showTooltip === "delete" && (
+						<Tooltip
+							message="Delete the entire chat"
+							top="7px"
+							left="-185%"
+						/>
+					)}
+				</div>
 			</div>
 
 			<div
