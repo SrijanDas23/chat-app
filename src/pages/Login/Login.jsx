@@ -2,11 +2,23 @@ import { useDispatch, useSelector } from "react-redux";
 import OAuth from "../../components/OAuth";
 import { setStaySignedIn } from "../../redux/user/userSlice";
 import { Helmet } from "react-helmet-async";
+import { useEffect, useState } from "react";
 
 const Login = () => {
 	const dispatch = useDispatch();
 	const { staySignedIn } = useSelector((state) => state.user);
 	const { currentUser } = useSelector((state) => state.user);
+
+	const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1000);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobileView(window.innerWidth < 400);
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
 
 	const handleCheckboxChange = (event) => {
 		dispatch(setStaySignedIn(event.target.checked));
@@ -19,13 +31,15 @@ const Login = () => {
 				justifyContent: "center",
 				flexDirection: "column",
 				alignItems: "center",
-				height: "80vh",
-				width: "80vw",
-				borderRadius: "20px",
+				height: isMobileView ? "94vh" : "80vh",
+				width: isMobileView ? "94vw" : "80vw",
+				borderRadius: isMobileView ? "0px" : "20px",
 				backgroundColor: "rgba(0, 0, 0, 0.4)",
-				rowGap: "2rem",
-				padding: "2rem",
+				rowGap: isMobileView ? "2rem" : "2rem",
+				padding: isMobileView ? "3vh 3vw" : "2rem",
 				boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.3)",
+				textAlign: "center",
+				// justifyContent:"space-around"
 			}}
 		>
 			<Helmet>
@@ -34,7 +48,10 @@ const Login = () => {
 					name="description"
 					content="Sign In page. You need to sign in to gain access to our website"
 				/>
-				<link rel="canonical" href="https://chatt-app23.netlify.app/login" />
+				<link
+					rel="canonical"
+					href="https://chatt-app23.netlify.app/login"
+				/>
 			</Helmet>
 			<h1>Welcome to Chat App!</h1>
 			<p>Sign in to gain access to the site.</p>
