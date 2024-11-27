@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Chat from "../../components/Chat";
 import Profile from "../../components/Profile";
 import Sidebar from "../../components/Sidebar";
+import { Helmet } from "react-helmet-async";
 
 const Home = () => {
 	const otherUser = useSelector((state) => state.otherUser.otherUserInChat);
@@ -34,6 +35,14 @@ const Home = () => {
 				boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.3)",
 			}}
 		>
+			<Helmet>
+				<title>Home</title>
+				<meta
+					name="description"
+					content="This is a realtime chat application. Use it to connect with your friends through their names and uids! This was created using React and Firebase."
+				/>
+				<link rel="canonical" href="https://chatt-app23.netlify.app/" />
+			</Helmet>
 			{isMobileView ? (
 				<>
 					{showProfile && (

@@ -34,7 +34,7 @@ const Login = () => {
 					name="description"
 					content="Sign In page. You need to sign in to gain access to our website"
 				/>
-				<link rel="canonical" href="/login" />
+				<link rel="canonical" href="https://chatt-app23.netlify.app/login" />
 			</Helmet>
 			<h1>Welcome to Chat App!</h1>
 			<p>Sign in to gain access to the site.</p>

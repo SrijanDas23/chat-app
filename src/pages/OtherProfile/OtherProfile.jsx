@@ -12,6 +12,7 @@ import { getAuth } from "firebase/auth";
 import Loading from "../../components/Loading";
 import MobileBlock from "./MobileBlock";
 import { setOtherUserInChat } from "../../redux/otherUser/otherUserSlice";
+import { Helmet } from "react-helmet-async";
 
 const OtherProfile = () => {
 	const [isBlocked, setIsBlocked] = useState(false);
@@ -149,6 +150,17 @@ const OtherProfile = () => {
 				width: "100vw",
 			}}
 		>
+			<Helmet>
+				<title>{userName}</title>
+				<meta
+					name="description"
+					content="Sign In page. You need to sign in to gain access to our website"
+				/>
+				<link
+					rel="canonical"
+					href={`https://chatt-app23.netlify.app/otherprofile/${userUid}`}
+				/>
+			</Helmet>
 			{isMobileView && (
 				<TiArrowBack
 					size={30}
