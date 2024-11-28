@@ -114,6 +114,33 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 			: otherUser.userName
 		: otherUser.userName;
 
+	const formatDate = (timestamp) => {
+		if (!timestamp) return "";
+		const date = new Date(timestamp.seconds * 1000);
+		const today = new Date();
+		const diffDays = (today - date) / (1000 * 60 * 60 * 24);
+
+		if (diffDays < 1) {
+			return "Today";
+		} else if (diffDays < 2) {
+			return "Yesterday";
+		} else {
+			const day = String(date.getDate()).padStart(2, "0");
+			const month = String(date.getMonth() + 1).padStart(2, "0");
+			const year = date.getFullYear().toString().slice(-2);
+			return `${day}/${month}/${year}`;
+		}
+	};
+
+	const formatTime = (timestamp) => {
+		if (!timestamp) return "";
+		const date = new Date(timestamp.seconds * 1000);
+		return date.toLocaleTimeString([], {
+			hour: "2-digit",
+			minute: "2-digit",
+		});
+	};
+
 	return (
 		<div
 			style={{
@@ -146,6 +173,7 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 					display: "flex",
 					flexDirection: "column",
 					justifyContent: "space-between",
+					flex: "1",
 				}}
 			>
 				<h2
@@ -162,7 +190,7 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 						textOverflow: "ellipsis",
 						whiteSpace: "nowrap",
 						wordWrap: "break-word",
-						maxWidth: "150px",
+						maxWidth: "100px",
 					}}
 				>
 					{draftMessage
@@ -174,6 +202,24 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 									: ""
 						  }${latestMessage?.content}`
 						: "No messages yet"}
+				</p>
+			</div>
+
+			<div
+				style={{
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "space-between",
+					alignItems: "flex-end",
+					fontSize: "0.7rem",
+					color: "#888",
+				}}
+			>
+				<p>
+					{latestMessage ? formatDate(latestMessage.timestamp) : ""}
+				</p>
+				<p>
+					{latestMessage ? formatTime(latestMessage.timestamp) : ""}
 				</p>
 			</div>
 		</div>
