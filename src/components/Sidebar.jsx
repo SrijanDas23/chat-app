@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 
-const Sidebar = ({onProfileClick}) => {
+const Sidebar = ({ onProfileClick }) => {
 	const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1000);
 	const { currentUser } = useSelector((state) => state.user);
 
@@ -27,7 +27,7 @@ const Sidebar = ({onProfileClick}) => {
 				borderRadius: isMobileView ? "0" : "20px",
 				backgroundColor: "rgba(0, 0, 0, 0.14)",
 				maxHeight: isMobileView ? "100vh" : "80vh",
-				rowGap: "1rem",
+				rowGap: isMobileView ? "0" : "1vh",
 			}}
 		>
 			<div
@@ -36,6 +36,7 @@ const Sidebar = ({onProfileClick}) => {
 					borderRadius: isMobileView ? "0" : "20px",
 					backgroundColor: "rgba(0, 0, 0, 0.07)",
 					display: "flex",
+					maxHeight: isMobileView ? "5vh" : "auto",
 				}}
 			>
 				{isMobileView && (
