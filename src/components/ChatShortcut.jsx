@@ -52,9 +52,9 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 
 				setIsBlocked(currentUserBlocked || otherUserBlocked);
 				setOtherUserBlocked(otherUserBlocked);
-				console.log("checking blocked users");
+				// console.log("checking blocked users");
 			} catch (error) {
-				console.error("Error checking block status:", error);
+				// console.error("Error checking block status:", error);
 				showToast(`Error checking block status: ${error}!`);
 			}
 		};
@@ -73,7 +73,7 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 				const messagesData = snapshot.docs.map((doc) => doc.data());
 				const lastMessage = messagesData[messagesData.length - 1];
 				setLatestMessage(lastMessage);
-				console.log(lastMessage);
+				// console.log(lastMessage);
 			}
 		});
 

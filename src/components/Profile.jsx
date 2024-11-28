@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useSelector } from "react-redux";
 import OAuth from "./OAuth";
 import { RxInfoCircled } from "react-icons/rx";
@@ -17,8 +18,8 @@ const Profile = ({ onBack }) => {
 	const [isOtherUserBlocked, setOtherUserBlocked] = useState(false);
 	const { currentUser } = useSelector((state) => state.user);
 	const otherUser = useSelector((state) => state.otherUser.otherUserInChat);
-	console.log(currentUser);
-	console.log(otherUser);
+	// console.log(currentUser);
+	// console.log(otherUser);
 	const [showTooltip, setShowTooltip] = useState(null);
 	const { showToast } = useToast();
 	const [loading, setLoading] = useState(false);
@@ -69,7 +70,7 @@ const Profile = ({ onBack }) => {
 				setIsBlocked(currentUserBlocked || otherUserBlocked);
 				setOtherUserBlocked(otherUserBlocked);
 			} catch (error) {
-				console.error("Error checking block status:", error);
+				// console.error("Error checking block status:", error);
 				showToast(`Error checking block status: ${error}!`);
 			}
 		};
@@ -106,7 +107,8 @@ const Profile = ({ onBack }) => {
 				showToast("Copied Successfully to Clipboard");
 			})
 			.catch((err) => {
-				console.error("Failed to copy text: ", err);
+				// console.error("Failed to copy text: ", err);
+				showToast("Failed to copy text");
 			});
 	};
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "../../context/ToastContext";
 import { useEffect, useState } from "react";
@@ -34,7 +35,8 @@ const MobileBlock = ({ user }) => {
 					setIsBlocked(blockedUsers.includes(user.userUid));
 				}
 			} catch (error) {
-				console.error("Error checking block status:", error);
+				// console.error("Error checking block status:", error);
+				showToast("Error checking block status");
 			}
 		};
 
@@ -64,7 +66,7 @@ const MobileBlock = ({ user }) => {
 			dispatch(setOtherUserInChat(user));
 			showToast(`Blocked ${user.userName} successfully.`);
 		} catch (error) {
-			console.error("Error blocking user:", error);
+			// console.error("Error blocking user:", error);
 			showToast("Failed to block the user. Please try again.");
 		}
 	};
@@ -84,7 +86,7 @@ const MobileBlock = ({ user }) => {
 			dispatch(setOtherUserInChat(user));
 			showToast(`Unblocked ${user.userName} successfully.`);
 		} catch (error) {
-			console.error("Error unblocking user:", error);
+			// console.error("Error unblocking user:", error);
 			showToast("Failed to unblock the user. Please try again.");
 		}
 	};

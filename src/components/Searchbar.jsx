@@ -12,12 +12,14 @@ import { db } from "../utils/firebase";
 import { getAuth } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { setOtherUserInChat } from "../redux/otherUser/otherUserSlice";
+import { useToast } from "../context/ToastContext";
 
 const Searchbar = () => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [results, setResults] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const dispatch = useDispatch();
+	const { showToast } = useToast();
 
 	const auth = getAuth();
 
@@ -73,9 +75,10 @@ const Searchbar = () => {
 					user.userUid !== auth.currentUser.uid
 			);
 			setResults(uniqueResults);
-			console.log(uniqueResults);
+			// console.log(uniqueResults);
 		} catch (error) {
-			console.error("Error searching users:", error);
+			// console.error("Error searching users:", error);
+			showToast("Error searching users");
 		} finally {
 			setLoading(false);
 		}
@@ -92,7 +95,7 @@ const Searchbar = () => {
 	const handleUserSelect = (user) => {
 		dispatch(setOtherUserInChat(user));
 		setSearchTerm("");
-		console.log("Selected User:", user);
+		// console.log("Selected User:", user);
 	};
 
 	return (

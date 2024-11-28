@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useRef, useState } from "react";
 import { db } from "../utils/firebase";
 import {
@@ -97,7 +98,8 @@ const Chat = () => {
 				// setCurrentUserBlocked(currentUserBlocked);
 				setOtherUserBlocked(otherUserBlocked);
 			} catch (error) {
-				console.error("Error checking block status:", error);
+				// console.error("Error checking block status:", error);
+				showToast("Error checking block status", error);
 			}
 		};
 
@@ -119,7 +121,8 @@ const Chat = () => {
 					});
 				}
 			} catch (error) {
-				console.error("Error creating chat room:", error);
+				// console.error("Error creating chat room:", error);
+				showToast("Error checking block status");
 			}
 		};
 
@@ -180,7 +183,8 @@ const Chat = () => {
 			dispatch(clearDraft({ chatRoomId }));
 			setChangeInMessage((prev) => prev + 1);
 		} catch (error) {
-			console.error("Error sending message: ", error);
+			// console.error("Error sending message: ", error);
+			showToast("Error searching users");
 		}
 	};
 
@@ -214,7 +218,7 @@ const Chat = () => {
 
 			showToast("Chat room deleted successfully");
 		} catch (error) {
-			console.error("Error deleting chat room", error);
+			// console.error("Error deleting chat room", error);
 			showToast("Error deleting chat room");
 		}
 	};

@@ -86,7 +86,7 @@ const ChatList = () => {
 
 				setChats(chatWithLastMessage);
 			} catch (error) {
-				console.error("Error fetching chats: ", error);
+				// console.error("Error fetching chats: ", error);
 				showToast(`Error checking block status: ${error}!`);
 			}
 		};

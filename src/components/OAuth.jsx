@@ -24,7 +24,7 @@ const OAuth = ({ setLoading }) => {
 	const dispatch = useDispatch();
 
 	const { currentUser } = useSelector((state) => state.user);
-	console.log(currentUser);
+	// console.log(currentUser);
 	const { showToast } = useToast();
 
 	const handleGoogleClick = async () => {
@@ -61,7 +61,7 @@ const OAuth = ({ setLoading }) => {
 			showToast(`Welcome, ${userData.userName}!`);
 			navigate("/");
 		} catch (e) {
-			console.error("Sign in failed:", e);
+			// console.error("Sign in failed:", e);
 			dispatch(signInFailure(e));
 			showToast("Sign in failed. Please try again");
 		} finally {
@@ -79,7 +79,7 @@ const OAuth = ({ setLoading }) => {
 			showToast("Signed out successfully!");
 			dispatch(signOutUserSuccess(null));
 		} catch (error) {
-			console.error("Error signing out: ", error);
+			// console.error("Error signing out: ", error);
 			dispatch(signOutUserFailure(error));
 			showToast("Error signing out. Please try again.");
 		} finally {

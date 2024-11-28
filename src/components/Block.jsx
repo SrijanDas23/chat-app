@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useDispatch, useSelector } from "react-redux";
 import {
 	doc,
@@ -32,7 +33,8 @@ const Block = () => {
 					setIsBlocked(blockedUsers.includes(otherUser.userUid));
 				}
 			} catch (error) {
-				console.error("Error checking block status:", error);
+				// console.error("Error checking block status:", error);
+				showToast("Error checking block status");
 			}
 		};
 
@@ -61,7 +63,7 @@ const Block = () => {
 			dispatch(setOtherUserInChat(null));
 			showToast(`Blocked ${otherUser.userName} successfully.`);
 		} catch (error) {
-			console.error("Error blocking user:", error);
+			// console.error("Error blocking user:", error);
 			showToast("Failed to block the user. Please try again.");
 		}
 	};
@@ -80,7 +82,7 @@ const Block = () => {
 			dispatch(setOtherUserInChat(null));
 			showToast(`Unblocked ${otherUser.userName} successfully.`);
 		} catch (error) {
-			console.error("Error unblocking user:", error);
+			// console.error("Error unblocking user:", error);
 			showToast("Failed to unblock the user. Please try again.");
 		}
 	};

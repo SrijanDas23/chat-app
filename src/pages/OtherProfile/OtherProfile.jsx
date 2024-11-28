@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "../../context/ToastContext";
@@ -27,7 +28,7 @@ const OtherProfile = () => {
 	const dispatch = useDispatch();
 
 	const [user, setUser] = useState(null);
-	console.log("user:", user);
+	// console.log("user:", user);
 	const [loading, setLoading] = useState(true);
 
 	const defaultAvatar = "../../../avatar.jpg";
@@ -53,7 +54,7 @@ const OtherProfile = () => {
 					navigate("/");
 				}
 			} catch (error) {
-				console.error("Error fetching user:", error);
+				// console.error("Error fetching user:", error);
 				showToast(`Error fetching user: ${error}`);
 			} finally {
 				setLoading(false);
@@ -87,7 +88,7 @@ const OtherProfile = () => {
 				setIsBlocked(currentUserBlocked || otherUserBlocked);
 				setOtherUserBlocked(otherUserBlocked);
 			} catch (error) {
-				console.error("Error checking block status:", error);
+				// console.error("Error checking block status:", error);
 				showToast(`Error checking block status: ${error}!`);
 			}
 		};
@@ -99,8 +100,8 @@ const OtherProfile = () => {
 		return () => clearInterval(intervalId);
 	}, [userUid, currentUser, user]);
 
-	console.log("otherUserBlocked: " + isOtherUserBlocked);
-	console.log("isBlocked: " + isBlocked);
+	// console.log("otherUserBlocked: " + isOtherUserBlocked);
+	// console.log("isBlocked: " + isBlocked);
 
 	const photoURL = user
 		? isBlocked
@@ -125,7 +126,8 @@ const OtherProfile = () => {
 				showToast("Copied Successfully to Clipboard");
 			})
 			.catch((err) => {
-				console.error("Failed to copy text: ", err);
+				// console.error("Failed to copy text: ", err);
+				showToast("Failed to copy text");
 			});
 	};
 
