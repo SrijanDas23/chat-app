@@ -144,7 +144,7 @@ const OtherProfile = () => {
 				display: "flex",
 				flexDirection: "column",
 				backgroundColor: "rgba(0, 0, 0, 0.14)",
-				height: "100vh",
+				height: "100dvh",
 				alignItems: "center",
 				justifyContent: "space-around",
 				width: "100vw",

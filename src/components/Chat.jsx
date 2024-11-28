@@ -222,7 +222,7 @@ const Chat = () => {
 	return (
 		<div
 			style={{
-				height: isMobileView ? "100vh" : "80vh",
+				height: isMobileView ? "100dvh" : "80dvh",
 				display: "flex",
 				flexDirection: "column",
 			}}
