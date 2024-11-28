@@ -79,6 +79,7 @@ const ChatList = () => {
 				overflowY: "auto",
 				marginBottom: "1rem",
 				height: isMobileView ? "95vh" : "85vh",
+				maxHeight: isMobileView ? "95vh" : "85vh",
 			}}
 		>
 			{chats.map((chatId, index) => {
