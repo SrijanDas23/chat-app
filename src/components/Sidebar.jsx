@@ -26,8 +26,8 @@ const Sidebar = ({ onProfileClick }) => {
 				flexDirection: "column",
 				borderRadius: isMobileView ? "0" : "20px",
 				backgroundColor: "rgba(0, 0, 0, 0.14)",
-				maxHeight: isMobileView ? "100dvh" : "80dvh",
-				rowGap: isMobileView ? "0" : "1dvh",
+				maxHeight: isMobileView ? "100dvh" : "80vh",
+				rowGap: isMobileView ? "0" : "1vh",
 			}}
 		>
 			<div

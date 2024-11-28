@@ -126,7 +126,12 @@ const Searchbar = () => {
 					Loading...
 				</p>
 			)}
-			<div style={{ maxHeight: "25dvh", overflowY: "auto" }}>
+			<div
+				style={{
+					maxHeight: isMobileView ? "25dvh" : "25vh",
+					overflowY: "auto",
+				}}
+			>
 				{results.map((user) => (
 					<div
 						key={user.id}

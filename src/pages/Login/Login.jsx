@@ -37,7 +37,7 @@ const Login = () => {
 				justifyContent: "center",
 				flexDirection: "column",
 				alignItems: "center",
-				height: isMobileView ? "94dvh" : "80dvh",
+				height: isMobileView ? "94dvh" : "80vh",
 				width: isMobileView ? "94vw" : "80vw",
 				borderRadius: isMobileView ? "0px" : "20px",
 				backgroundColor: "rgba(0, 0, 0, 0.4)",
