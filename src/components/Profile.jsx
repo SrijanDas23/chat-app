@@ -10,6 +10,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../utils/firebase";
 import { TiArrowBack } from "react-icons/ti";
 import PropTypes from "prop-types";
+import Loading from "./Loading";
 
 const Profile = ({ onBack }) => {
 	const [isBlocked, setIsBlocked] = useState(false);
@@ -20,6 +21,7 @@ const Profile = ({ onBack }) => {
 	console.log(otherUser);
 	const [showTooltip, setShowTooltip] = useState(null);
 	const { showToast } = useToast();
+	const [loading, setLoading] = useState(false);
 
 	const user = otherUser || currentUser;
 	const email = otherUser ? "" : currentUser.email;
@@ -107,6 +109,11 @@ const Profile = ({ onBack }) => {
 				console.error("Failed to copy text: ", err);
 			});
 	};
+
+	if (loading) {
+		return <Loading />;
+	}
+
 	return (
 		<div
 			style={{
@@ -235,7 +242,7 @@ const Profile = ({ onBack }) => {
 					alignItems: "center",
 				}}
 			>
-				{!otherUser ? <OAuth /> : <Block />}
+				{!otherUser ? <OAuth setLoading={setLoading} /> : <Block />}
 			</div>
 		</div>
 	);

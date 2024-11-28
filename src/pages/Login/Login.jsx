@@ -3,6 +3,7 @@ import OAuth from "../../components/OAuth";
 import { setStaySignedIn } from "../../redux/user/userSlice";
 import { Helmet } from "react-helmet-async";
 import { useEffect, useState } from "react";
+import Loading from "../../components/Loading";
 
 const Login = () => {
 	const dispatch = useDispatch();
@@ -10,6 +11,7 @@ const Login = () => {
 	const { currentUser } = useSelector((state) => state.user);
 
 	const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1000);
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -23,6 +25,10 @@ const Login = () => {
 	const handleCheckboxChange = (event) => {
 		dispatch(setStaySignedIn(event.target.checked));
 	};
+
+	if (loading) {
+		return <Loading />;
+	}
 
 	return (
 		<div
@@ -39,7 +45,6 @@ const Login = () => {
 				padding: isMobileView ? "3vh 3vw" : "2rem",
 				boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.3)",
 				textAlign: "center",
-				// justifyContent:"space-around"
 			}}
 		>
 			<Helmet>
@@ -55,7 +60,7 @@ const Login = () => {
 			</Helmet>
 			<h1>Welcome to Chat App!</h1>
 			<p>Sign in to gain access to the site.</p>
-			<OAuth />
+			<OAuth setLoading={setLoading} />
 			{!currentUser && (
 				<div>
 					<label

@@ -17,8 +17,9 @@ import {
 } from "../redux/user/userSlice";
 import { useToast } from "../context/ToastContext";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import PropTypes from "prop-types";
 
-export default function OAuth() {
+const OAuth = ({ setLoading }) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
@@ -28,6 +29,7 @@ export default function OAuth() {
 
 	const handleGoogleClick = async () => {
 		try {
+			setLoading(true);
 			dispatch(signInStart());
 
 			const provider = new GoogleAuthProvider();
@@ -62,11 +64,14 @@ export default function OAuth() {
 			console.error("Sign in failed:", e);
 			dispatch(signInFailure(e));
 			showToast("Sign in failed. Please try again");
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	const handleLogout = async () => {
 		try {
+			setLoading(true);
 			dispatch(signOutUserStart());
 			const auth = getAuth(app);
 			await signOut(auth);
@@ -77,6 +82,8 @@ export default function OAuth() {
 			console.error("Error signing out: ", error);
 			dispatch(signOutUserFailure(error));
 			showToast("Error signing out. Please try again.");
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -91,4 +98,10 @@ export default function OAuth() {
 			)}
 		</div>
 	);
-}
+};
+
+OAuth.propTypes = {
+	setLoading: PropTypes.func.isRequired,
+};
+
+export default OAuth;
