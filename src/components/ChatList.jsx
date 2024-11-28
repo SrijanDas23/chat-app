@@ -81,19 +81,48 @@ const ChatList = () => {
 				height: isMobileView ? "95vh" : "85vh",
 			}}
 		>
-			{chats.map((chatId, index) => {
-				const [user1, user2] = chatId.split("_");
-				const otherUserId = user1 === currentUserUid ? user2 : user1;
-				const otherUser = users[otherUserId];
-
-				return (
-					<ChatShortcut
-						key={index}
-						otherUser={otherUser}
-						chatId={chatId}
+			{[...Array(12)].map((_, index) => (
+				<div
+					key={index}
+					style={{
+						display: "flex",
+						columnGap: "1rem",
+						cursor: "pointer",
+						padding: "1rem 2rem",
+						borderRadius: "40px",
+						transition: "background-color 0.3s",
+					}}
+					className="selectedChat"
+				>
+					<img
+						src="../../public/avatar.jpg"
+						alt=""
+						style={{ width: "40px", borderRadius: "50%" }}
 					/>
-				);
-			})}
+					<div
+						style={{
+							display: "flex",
+							flexDirection: "column",
+							justifyContent: "space-between",
+						}}
+					>
+						<h2 style={{ fontSize: "0.9rem" }}>Name</h2>
+						<p
+							style={{
+								fontSize: "0.8rem",
+								overflow: "hidden",
+								textOverflow: "ellipsis",
+								whiteSpace: "nowrap",
+								wordWrap: "break-word",
+								maxWidth: "150px",
+							}}
+						>
+							This person&apos;s text is wdhdw wdowhdw dwkndw
+							kwndkwnd{" "}
+						</p>
+					</div>
+				</div>
+			))}
 		</div>
 	);
 };
