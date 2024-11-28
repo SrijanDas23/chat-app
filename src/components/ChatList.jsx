@@ -1,4 +1,11 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+	collection,
+	getDocs,
+	query,
+	where,
+	orderBy,
+	limit,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { db } from "../utils/firebase";
@@ -7,7 +14,6 @@ import { useToast } from "../context/ToastContext";
 
 const ChatList = () => {
 	const [chats, setChats] = useState([]);
-	const [users, setUsers] = useState({});
 	const { currentUser } = useSelector((state) => state.user);
 	const currentUserUid = currentUser?.userUid;
 
@@ -38,11 +44,26 @@ const ChatList = () => {
 
 				const usersRef = collection(db, "users");
 				const userDetails = {};
-
+				const chatWithLastMessage = [];
 				for (let chatId of userChats) {
 					const [user1, user2] = chatId.split("_");
 					const otherUserId =
 						user1 === currentUserUid ? user2 : user1;
+
+					const messagesRef = collection(
+						db,
+						"chats",
+						chatId,
+						"messages"
+					);
+					const messagesQuery = query(
+						messagesRef,
+						orderBy("timestamp", "desc"),
+						limit(1)
+					);
+					const messagesSnapshot = await getDocs(messagesQuery);
+					const latestMessage = messagesSnapshot.docs[0]?.data();
+
 					if (!userDetails[otherUserId]) {
 						const userSnapshot = await getDocs(
 							query(usersRef, where("userUid", "==", otherUserId))
@@ -51,10 +72,19 @@ const ChatList = () => {
 							userDetails[otherUserId] = doc.data();
 						});
 					}
+					chatWithLastMessage.push({
+						chatId,
+						otherUser: userDetails[otherUserId],
+						latestMessageTimestamp:
+							latestMessage?.timestamp?.toMillis(),
+					});
 				}
+				chatWithLastMessage.sort(
+					(a, b) =>
+						b.latestMessageTimestamp - a.latestMessageTimestamp
+				);
 
-				setUsers(userDetails);
-				setChats(userChats);
+				setChats(chatWithLastMessage);
 			} catch (error) {
 				console.error("Error fetching chats: ", error);
 				showToast(`Error checking block status: ${error}!`);
@@ -82,11 +112,7 @@ const ChatList = () => {
 				maxHeight: isMobileView ? "95dvh" : "85dvh",
 			}}
 		>
-			{chats.map((chatId, index) => {
-				const [user1, user2] = chatId.split("_");
-				const otherUserId = user1 === currentUserUid ? user2 : user1;
-				const otherUser = users[otherUserId];
-
+			{chats.map(({ chatId, otherUser }, index) => {
 				return (
 					<ChatShortcut
 						key={index}
