@@ -36,7 +36,7 @@ const Sidebar = ({ onProfileClick }) => {
 					borderRadius: isMobileView ? "0" : "20px",
 					backgroundColor: "rgba(0, 0, 0, 0.07)",
 					display: "flex",
-					maxHeight: isMobileView ? "5dvh" : "auto",
+					// maxHeight: isMobileView ? "5dvh" : "auto",
 				}}
 			>
 				{isMobileView && (
