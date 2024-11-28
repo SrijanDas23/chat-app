@@ -100,7 +100,7 @@ const Searchbar = () => {
 			style={{
 				borderRadius: "20px 20px",
 				backgroundColor: "rgba(0, 0, 0, 0.14)",
-				flex:"1"
+				flex: "1",
 			}}
 		>
 			<input
@@ -123,7 +123,7 @@ const Searchbar = () => {
 					Loading...
 				</p>
 			)}
-			<div style={{}}>
+			<div style={{ maxHeight: "25dvh", overflowY: "auto" }}>
 				{results.map((user) => (
 					<div
 						key={user.id}
