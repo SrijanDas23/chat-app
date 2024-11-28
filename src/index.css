@@ -23,6 +23,7 @@ body {
 	justify-content: center;
 	align-items: center;
 	height: 100vh;
+	max-height: 100vh;
 }
 
 a {
@@ -82,7 +83,7 @@ button:focus-visible {
 	background-color: #7d56c647;
 }
 
-.delete:hover{
+.delete:hover {
 	background-color: #7d56c647;
 }
 
