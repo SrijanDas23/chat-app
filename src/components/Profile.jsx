@@ -18,8 +18,8 @@ const Profile = ({ onBack }) => {
 	const [isOtherUserBlocked, setOtherUserBlocked] = useState(false);
 	const { currentUser } = useSelector((state) => state.user);
 	const otherUser = useSelector((state) => state.otherUser.otherUserInChat);
-	// console.log(currentUser);
-	// console.log(otherUser);
+	// console.log("current user:", currentUser);
+	// console.log("other user:", otherUser);
 	const [showTooltip, setShowTooltip] = useState(null);
 	const { showToast } = useToast();
 	const [loading, setLoading] = useState(false);

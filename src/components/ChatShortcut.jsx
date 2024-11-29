@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../utils/firebase";
 import { useToast } from "../context/ToastContext";
+import { formatDate, formatTime } from "../utils/formatDateTime";
 
 const ChatShortcut = ({ otherUser, chatId }) => {
 	const [latestMessage, setLatestMessage] = useState(null);
@@ -113,33 +114,6 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 			? "Another User"
 			: otherUser.userName
 		: otherUser.userName;
-
-	const formatDate = (timestamp) => {
-		if (!timestamp) return "";
-		const date = new Date(timestamp.seconds * 1000);
-		const today = new Date();
-		const diffDays = (today - date) / (1000 * 60 * 60 * 24);
-
-		if (diffDays < 1) {
-			return "Today";
-		} else if (diffDays < 2) {
-			return "Yesterday";
-		} else {
-			const day = String(date.getDate()).padStart(2, "0");
-			const month = String(date.getMonth() + 1).padStart(2, "0");
-			const year = date.getFullYear().toString().slice(-2);
-			return `${day}/${month}/${year}`;
-		}
-	};
-
-	const formatTime = (timestamp) => {
-		if (!timestamp) return "";
-		const date = new Date(timestamp.seconds * 1000);
-		return date.toLocaleTimeString([], {
-			hour: "2-digit",
-			minute: "2-digit",
-		});
-	};
 
 	return (
 		<div

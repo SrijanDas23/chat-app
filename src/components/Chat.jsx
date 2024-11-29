@@ -24,6 +24,7 @@ import Tooltip from "./Tooltip";
 import { MdDelete } from "react-icons/md";
 import { useToast } from "../context/ToastContext";
 import DeleteModal from "./DeleteModal";
+import { formatDate, formatTime } from "../utils/formatDateTime";
 
 const Chat = () => {
 	const [messages, setMessages] = useState([]);
@@ -34,6 +35,7 @@ const Chat = () => {
 	const dispatch = useDispatch();
 	const [showTooltip, setShowTooltip] = useState(null);
 	const { showToast } = useToast();
+	const [showDateTime, setShowDateTime] = useState(null);
 
 	const [isBlocked, setIsBlocked] = useState(false);
 	// const [isCurrentUserBlocked, setCurrentUserBlocked] = useState(false);
@@ -431,11 +433,60 @@ const Chat = () => {
 											msg.senderId === currentUserUid
 												? "20px 20px 0 20px"
 												: "20px 20px 20px 0",
+										display: "flex",
+										flexDirection: "column",
 									}}
+									onMouseEnter={() => setShowDateTime(index)}
+									onMouseLeave={() => setShowDateTime(null)}
 								>
 									<p style={{ margin: "0.4rem 0.8rem" }}>
 										{msg.content}
 									</p>
+									{showDateTime === index && (
+										<div
+											style={{
+												display: "flex",
+												flexDirection: "column",
+											}}
+										>
+											<p
+												style={{
+													margin:
+														msg.senderId ===
+														currentUserUid
+															? "0rem 0.4rem 0rem 0.8rem"
+															: "0rem 0.8rem 0rem 0.4rem",
+													color: "#888",
+													fontSize: "0.7rem",
+													alignSelf:
+														msg.senderId ===
+														currentUserUid
+															? "flex-end"
+															: "flex-start",
+												}}
+											>
+												{formatDate(msg.timestamp)}
+											</p>
+											<p
+												style={{
+													margin:
+														msg.senderId ===
+														currentUserUid
+															? "0rem 0.4rem 0rem 0.8rem"
+															: "0rem 0.8rem 0rem 0.4rem",
+													color: "#888",
+													fontSize: "0.7rem",
+													alignSelf:
+														msg.senderId ===
+														currentUserUid
+															? "flex-end"
+															: "flex-start",
+												}}
+											>
+												{formatTime(msg.timestamp)}
+											</p>
+										</div>
+									)}
 								</div>
 							</div>
 							<div ref={dummy}></div>
