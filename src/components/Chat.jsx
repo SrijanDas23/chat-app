@@ -25,6 +25,8 @@ import { MdDelete } from "react-icons/md";
 import { useToast } from "../context/ToastContext";
 import DeleteModal from "./DeleteModal";
 import { formatDate, formatTime } from "../utils/formatDateTime";
+import { LuSmilePlus } from "react-icons/lu";
+import EmojiPicker from "emoji-picker-react";
 
 const Chat = () => {
 	const [messages, setMessages] = useState([]);
@@ -53,6 +55,8 @@ const Chat = () => {
 			: `${otherUser.userUid}_${currentUserUid}`;
 	const chatRoomRef = doc(db, "chats", chatRoomId);
 	const messagesRef = collection(chatRoomRef, "messages");
+
+	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
 	const drafts = useSelector((state) => state.drafts);
 	const currentDraft = drafts[chatRoomId] || "";
@@ -225,6 +229,11 @@ const Chat = () => {
 		}
 	};
 
+	const handleEmojiClick = (emojiObject) => {
+		setNewMessage((prevMessage) => prevMessage + emojiObject.emoji);
+		setShowEmojiPicker(false);
+	};
+
 	return (
 		<div
 			style={{
@@ -237,7 +246,7 @@ const Chat = () => {
 				style={{
 					display: "flex",
 					alignItems: "center",
-					margin: "1rem",
+					margin: "1rem 0.5rem",
 					justifyContent: "space-between",
 				}}
 			>
@@ -245,21 +254,29 @@ const Chat = () => {
 					style={{
 						display: "flex",
 						alignItems: "center",
-						gap: "1rem",
+						gap: "0.3rem",
 					}}
 				>
 					<div
-						style={{ position: "relative", cursor: "pointer" }}
+						className="react-icon"
+						style={{
+							width: "40px",
+							height: "40px",
+							display: "flex",
+							justifyContent: "center",
+							alignItems: "center",
+							borderRadius: "50%",
+							transition: "background-color ease 0.3s",
+							cursor: "pointer",
+							position: "relative",
+						}}
 						onMouseEnter={() => setShowTooltip("back")}
 						onMouseLeave={() => setShowTooltip(null)}
 						onClick={() => dispatch(setOtherUserInChat(null))}
 					>
-						<TiArrowBack
-							size={25}
-							style={{ cursor: "pointer", marginLeft: "-0.6rem" }}
-						/>
+						<TiArrowBack size={25} />
 						{showTooltip === "back" && (
-							<Tooltip message="Go back" top="-30px" />
+							<Tooltip message="Go back" top="45px" />
 						)}
 					</div>
 					<img
@@ -297,7 +314,7 @@ const Chat = () => {
 					</h2>
 				</div>
 				<div
-					className="delete"
+					className="react-icon"
 					style={{
 						width: "40px",
 						height: "40px",
@@ -502,6 +519,42 @@ const Chat = () => {
 					margin: "1rem",
 				}}
 			>
+				<div
+					className="react-icon"
+					style={{
+						width: "35px",
+						height: "35px",
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center",
+						borderRadius: "50%",
+						transition: "background-color ease 0.3s",
+						cursor: "pointer",
+						position: "relative",
+						marginRight: "5px",
+					}}
+					onMouseEnter={() => setShowTooltip("emoji")}
+					onMouseLeave={() => setShowTooltip(null)}
+					onClick={() => setShowEmojiPicker((prev) => !prev)}
+				>
+					<LuSmilePlus size={20} />
+					{showTooltip === "emoji" && (
+						<Tooltip message="Emojis" top="-30px" />
+					)}
+				</div>
+				{showEmojiPicker && (
+					<div
+						style={{
+							position: "absolute",
+							bottom: "50px",
+							left: "50px",
+							zIndex: 100,
+						}}
+					>
+						<EmojiPicker onEmojiClick={handleEmojiClick} />
+					</div>
+				)}
+
 				<input
 					type="text"
 					value={newMessage}
