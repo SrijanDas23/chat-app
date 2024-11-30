@@ -23,10 +23,11 @@ import { setOtherUserInChat } from "../redux/otherUser/otherUserSlice";
 import Tooltip from "./Tooltip";
 import { MdDelete } from "react-icons/md";
 import { useToast } from "../context/ToastContext";
-import DeleteModal from "./DeleteModal";
 import { formatDate, formatTime } from "../utils/formatDateTime";
 import { LuSmilePlus } from "react-icons/lu";
 import EmojiPicker from "emoji-picker-react";
+import { IoIosColorPalette } from "react-icons/io";
+import Modal from "./Modal";
 
 const Chat = () => {
 	const [messages, setMessages] = useState([]);
@@ -61,7 +62,7 @@ const Chat = () => {
 	const drafts = useSelector((state) => state.drafts);
 	const currentDraft = drafts[chatRoomId] || "";
 
-	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(null);
 
 	const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1000);
 
@@ -313,35 +314,37 @@ const Chat = () => {
 						{userName}
 					</h2>
 				</div>
-				<div
-					className="react-icon"
-					style={{
-						width: "40px",
-						height: "40px",
-						display: "flex",
-						justifyContent: "center",
-						alignItems: "center",
-						borderRadius: "50%",
-						transition: "background-color ease 0.3s",
-						cursor: "pointer",
-						position: "relative",
-					}}
-					onClick={() => setIsModalOpen(true)}
-					onMouseEnter={() => setShowTooltip("delete")}
-					onMouseLeave={() => setShowTooltip(null)}
-				>
-					<MdDelete size={20} />
-					{showTooltip === "delete" && (
-						<Tooltip
-							message="Delete the entire chat"
-							top="7px"
-							left="-185%"
-						/>
-					)}
+				<div style={{ display: "flex", gap: "0.2rem" }}>
+					<div
+						className="react-icon"
+						style={{
+							width: "40px",
+							height: "40px",
+							display: "flex",
+							justifyContent: "center",
+							alignItems: "center",
+							borderRadius: "50%",
+							transition: "background-color ease 0.3s",
+							cursor: "pointer",
+							position: "relative",
+						}}
+						onClick={() => setIsModalOpen("delete")}
+						onMouseEnter={() => setShowTooltip("delete")}
+						onMouseLeave={() => setShowTooltip(null)}
+					>
+						<MdDelete size={20} />
+						{showTooltip === "delete" && (
+							<Tooltip
+								message="Delete the entire chat"
+								top="7px"
+								left="-185%"
+							/>
+						)}
+					</div>
 				</div>
 
-				{isModalOpen && (
-					<DeleteModal onClose={() => setIsModalOpen(false)}>
+				{isModalOpen === "delete" && (
+					<Modal onClose={() => setIsModalOpen(null)}>
 						<h3>Confirm Deletion</h3>
 						<p>Are you sure you want to delete the entire chat?</p>
 						<div
@@ -354,7 +357,6 @@ const Chat = () => {
 							<button
 								style={{
 									marginRight: "1rem",
-									backgroundColor: "#7e56c6",
 									color: "#fff",
 									border: "none",
 									borderRadius: "20px",
@@ -363,7 +365,7 @@ const Chat = () => {
 								}}
 								onClick={() => {
 									handleDelete();
-									setIsModalOpen(false);
+									setIsModalOpen(null);
 								}}
 							>
 								Delete
@@ -377,12 +379,12 @@ const Chat = () => {
 									padding: "0.5rem 1rem",
 									cursor: "pointer",
 								}}
-								onClick={() => setIsModalOpen(false)}
+								onClick={() => setIsModalOpen(null)}
 							>
 								Cancel
 							</button>
 						</div>
-					</DeleteModal>
+					</Modal>
 				)}
 			</div>
 

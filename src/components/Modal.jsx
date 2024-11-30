@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { IoClose } from "react-icons/io5";
 
-const DeleteModal = ({ onClose, children }) => {
+const Modal = ({ onClose, children }) => {
 	return (
 		<div
 			style={{
@@ -25,6 +25,8 @@ const DeleteModal = ({ onClose, children }) => {
 					position: "relative",
 					width: "80%",
 					maxWidth: "500px",
+					maxHeight: "50dvh",
+					overflowY: "auto",
 				}}
 			>
 				{children}
@@ -36,6 +38,7 @@ const DeleteModal = ({ onClose, children }) => {
 						border: "none",
 						cursor: "pointer",
 						outline: "none",
+						background:"none"
 					}}
 					onClick={onClose}
 				>
@@ -46,9 +49,9 @@ const DeleteModal = ({ onClose, children }) => {
 	);
 };
 
-DeleteModal.propTypes = {
+Modal.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	children: PropTypes.node,
 };
 
-export default DeleteModal;
+export default Modal;

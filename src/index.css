@@ -5,7 +5,15 @@
 
 	color-scheme: light dark;
 	color: rgba(255, 255, 255, 0.87);
-	background-image: linear-gradient(#7e56c6, #24063d);
+	--gradient-start: #7e56c6;
+    --gradient-end: #24063d;
+    --button-bg: #24063d;
+    --button-border-hover: #7e56c6;
+    --scrollbar-track: #7e56c6;
+    --scrollbar-thumb: #5a1791;
+    --scrollbar-thumb-hover: #24063d;
+
+    background-image: linear-gradient(var(--gradient-start), var(--gradient-end));
 
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
@@ -48,12 +56,12 @@ button {
 	font-size: 1em;
 	font-weight: 500;
 	font-family: inherit;
-	background-color: #24063d;
+	background-color: var(--button-bg);
 	cursor: pointer;
 	transition: border-color 0.3s, transform 0.3s;
 }
 button:hover {
-	border-color: #7e56c6;
+	border-color: var(--button-border-hover);
 	transform: translateY(-4px);
 }
 button:focus,
@@ -66,36 +74,23 @@ button:focus-visible {
 }
 
 ::-webkit-scrollbar-track {
-	background: #7e56c6;
+	background: var(--scrollbar-track);
 	border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-	background: #5a1791;
+	background: var(--scrollbar-thumb);
 	border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background: #24063d;
+	background: var(--scrollbar-thumb-hover);
 }
 
 .selectedChat:hover {
-	background-color: #7d56c647;
+	background-color: #ffffff0f;
 }
 
 .react-icon:hover {
-	background-color: #7d56c647;
-}
-
-@media (prefers-color-scheme: light) {
-	:root {
-		color: #213547;
-		background-color: #ffffff;
-	}
-	a:hover {
-		color: #747bff;
-	}
-	button {
-		background-color: #f9f9f9;
-	}
+	background-color: #ffffff11;
 }

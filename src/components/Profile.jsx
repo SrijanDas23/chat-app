@@ -12,6 +12,7 @@ import { db } from "../utils/firebase";
 import { TiArrowBack } from "react-icons/ti";
 import PropTypes from "prop-types";
 import Loading from "./Loading";
+import ChangeTheme from "./ChangeTheme";
 
 const Profile = ({ onBack }) => {
 	const [isBlocked, setIsBlocked] = useState(false);
@@ -144,6 +145,7 @@ const Profile = ({ onBack }) => {
 					onClick={onBack}
 				/>
 			)}
+			<ChangeTheme />
 			<div
 				style={{
 					display: "flex",
