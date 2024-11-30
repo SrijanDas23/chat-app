@@ -26,7 +26,7 @@ import { useToast } from "../context/ToastContext";
 import { formatDate, formatTime } from "../utils/formatDateTime";
 import { LuSmilePlus } from "react-icons/lu";
 import EmojiPicker from "emoji-picker-react";
-import { IoIosColorPalette } from "react-icons/io";
+import { BiFontFamily } from "react-icons/bi";
 import Modal from "./Modal";
 
 const Chat = () => {
@@ -39,6 +39,16 @@ const Chat = () => {
 	const [showTooltip, setShowTooltip] = useState(null);
 	const { showToast } = useToast();
 	const [showDateTime, setShowDateTime] = useState(null);
+	const [selectedFont, setSelectedFont] = useState("Inter");
+	const fonts = [
+		"Inter",
+		"Roboto",
+		"Arial",
+		"Courier New",
+		"Georgia",
+		"Tahoma",
+		"Verdana",
+	];
 
 	const [isBlocked, setIsBlocked] = useState(false);
 	// const [isCurrentUserBlocked, setCurrentUserBlocked] = useState(false);
@@ -144,9 +154,9 @@ const Chat = () => {
 
 	useEffect(() => {
 		const q = query(messagesRef, orderBy("timestamp"));
-		const unsubscribe = onSnapshot(q, (snapshot) => {
-			const messagesData = snapshot.docs.map((doc) => doc.data());
 
+		const unsubscribeMessages = onSnapshot(q, (snapshot) => {
+			const messagesData = snapshot.docs.map((doc) => doc.data());
 			const newMessages = messagesData.filter(
 				(msg) =>
 					!messages.some(
@@ -162,13 +172,22 @@ const Chat = () => {
 
 			setTimeout(() => {
 				setMessages(messagesData);
-				// console.log(messages);
 				setLoading(false);
 			}, 300);
 		});
 
-		return () => unsubscribe();
-	}, [chatRoomRef, messagesRef]);
+		const unsubscribeChatRoom = onSnapshot(chatRoomRef, (snapshot) => {
+			if (snapshot.exists()) {
+				const chatRoomData = snapshot.data();
+				setSelectedFont(chatRoomData.font || "Arial");
+			}
+		});
+
+		return () => {
+			unsubscribeMessages();
+			unsubscribeChatRoom();
+		};
+	}, [chatRoomRef, messagesRef, messages]);
 
 	const handleInputChange = (e) => {
 		setNewMessage(e.target.value);
@@ -235,12 +254,22 @@ const Chat = () => {
 		setShowEmojiPicker(false);
 	};
 
+	const handleFontChange = async (font) => {
+		try {
+			await setDoc(chatRoomRef, { font }, { merge: true });
+			setIsModalOpen(null);
+		} catch (error) {
+			console.error("Error updating font:", error);
+		}
+	};
+
 	return (
 		<div
 			style={{
 				height: isMobileView ? "100dvh" : "80vh",
 				display: "flex",
 				flexDirection: "column",
+				background: "rgba(255,255,255,0.05)",
 			}}
 		>
 			<div
@@ -328,6 +357,33 @@ const Chat = () => {
 							cursor: "pointer",
 							position: "relative",
 						}}
+						onClick={() => setIsModalOpen("font")}
+						onMouseEnter={() => setShowTooltip("font")}
+						onMouseLeave={() => setShowTooltip(null)}
+					>
+						<BiFontFamily size={20} />
+						{showTooltip === "font" && (
+							<Tooltip
+								message="Change font of the chat"
+								top="7px"
+								left="-200%"
+							/>
+						)}
+					</div>
+
+					<div
+						className="react-icon"
+						style={{
+							width: "40px",
+							height: "40px",
+							display: "flex",
+							justifyContent: "center",
+							alignItems: "center",
+							borderRadius: "50%",
+							transition: "background-color ease 0.3s",
+							cursor: "pointer",
+							position: "relative",
+						}}
 						onClick={() => setIsModalOpen("delete")}
 						onMouseEnter={() => setShowTooltip("delete")}
 						onMouseLeave={() => setShowTooltip(null)}
@@ -342,6 +398,40 @@ const Chat = () => {
 						)}
 					</div>
 				</div>
+
+				{isModalOpen === "font" && (
+					<Modal onClose={() => setIsModalOpen(null)}>
+						<h3 style={{ marginBottom: "2rem" }}>
+							Change Font of this Chat
+						</h3>
+						{fonts.map((font) => (
+							<div
+								key={font}
+								style={{
+									marginBottom: "8px",
+								}}
+							>
+								<label>
+									<input
+										type="radio"
+										name="font"
+										value={font}
+										checked={selectedFont === font}
+										onChange={() => handleFontChange(font)}
+									/>
+									<span
+										style={{
+											fontFamily: font,
+											marginLeft: "8px",
+										}}
+									>
+										{font}
+									</span>
+								</label>
+							</div>
+						))}
+					</Modal>
+				)}
 
 				{isModalOpen === "delete" && (
 					<Modal onClose={() => setIsModalOpen(null)}>
@@ -393,6 +483,7 @@ const Chat = () => {
 					overflowY: "auto",
 					margin: "1rem",
 					flex: "1",
+					fontFamily: selectedFont,
 				}}
 			>
 				{loading ? (
@@ -445,8 +536,8 @@ const Chat = () => {
 									style={{
 										background:
 											msg.senderId === currentUserUid
-												? "rgba(0,0,0,0.2)"
-												: "rgba(255,255,255,0.2)",
+												? "rgba(0,0,0,0.15)"
+												: "rgba(255,255,255,0.1)",
 										width: "fit-content",
 										borderRadius:
 											msg.senderId === currentUserUid
@@ -563,7 +654,7 @@ const Chat = () => {
 					onChange={handleInputChange}
 					placeholder="Type a message..."
 					style={{
-						border: "1.5px solid #7e56c6",
+						border: "1.5px solid rgba(255, 255, 255, 0.2)",
 						borderRadius: "20px",
 						padding: "0.5rem",
 						outline: "none",

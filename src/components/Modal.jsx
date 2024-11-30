@@ -35,7 +35,7 @@ const Modal = ({ onClose, children }) => {
 					maxWidth: "500px",
 					maxHeight: "50dvh",
 					overflowY: "auto",
-					backdropFilter: "blur(5px)",
+					backdropFilter: "blur(7px)",
 				}}
 			>
 				{children}

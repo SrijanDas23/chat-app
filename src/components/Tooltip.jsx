@@ -8,13 +8,14 @@ const Tooltip = ({ message, top = "-40px", left = "50%" }) => {
 					top: top,
 					left: left,
 					transform: "translateX(-50%)",
-					backgroundColor: "#24063dc3",
+					backgroundColor: "rgba(0, 0, 0,0.4)",
 					color: "white",
 					padding: "5px 10px",
 					borderRadius: "5px",
 					fontSize: "0.8rem",
 					textAlign: "center",
 					whiteSpace: "nowrap",
+					backdropFilter: "blur(3px)",
 				}}
 			>
 				{message}

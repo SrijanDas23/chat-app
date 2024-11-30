@@ -11,7 +11,7 @@ const Toast = () => {
 				position: "fixed",
 				bottom: "20px",
 				right: "20px",
-				backgroundColor: "#380d5cab",
+				backgroundColor: "rgba(255, 255, 255,0.1)",
 				color: "#fff",
 				padding: "10px 20px",
 				borderRadius: "8px",
