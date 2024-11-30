@@ -12,6 +12,7 @@ import {
 	orderBy,
 	query,
 	setDoc,
+	updateDoc,
 	writeBatch,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -75,6 +76,22 @@ const Chat = () => {
 	const [isModalOpen, setIsModalOpen] = useState(null);
 
 	const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1000);
+
+	const [isTyping, setIsTyping] = useState(false);
+	let typingTimeout = null;
+
+	useEffect(() => {
+		const typing = onSnapshot(chatRoomRef, (snapshot) => {
+			if (snapshot.exists()) {
+				const data = snapshot.data();
+				const otherUserTyping =
+					data.typing?.[otherUser.userUid] || false;
+				setIsTyping(otherUserTyping);
+			}
+		});
+
+		return () => typing();
+	}, [chatRoomRef, otherUser.userUid]);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -192,6 +209,13 @@ const Chat = () => {
 	const handleInputChange = (e) => {
 		setNewMessage(e.target.value);
 		dispatch(saveDraft({ chatRoomId, draftMessage: e.target.value }));
+
+		setTypingStatus(true);
+
+		if (typingTimeout) clearTimeout(typingTimeout);
+		typingTimeout = setTimeout(() => {
+			setTypingStatus(false);
+		}, 1000);
 	};
 
 	const handleSendMessage = async () => {
@@ -263,6 +287,17 @@ const Chat = () => {
 		}
 	};
 
+	const setTypingStatus = async (isTyping) => {
+		try {
+			const typingField = `typing.${currentUserUid}`;
+			await updateDoc(chatRoomRef, {
+				[typingField]: isTyping,
+			});
+		} catch (error) {
+			console.error("Error updating typing status:", error);
+		}
+	};
+
 	return (
 		<div
 			style={{
@@ -329,19 +364,37 @@ const Chat = () => {
 						loading="eager"
 						title={userName}
 					/>
-					<h2
+					<div
 						style={{
-							fontSize: "0.9rem",
-							cursor: isMobileView ? "pointer" : "default",
-						}}
-						onClick={() => {
-							if (isMobileView) {
-								window.location.href = `/otherprofile/${otherUser.userUid}`;
-							}
+							display: "flex",
+							flexDirection: "column",
+							justifyContent: "space-between",
 						}}
 					>
-						{userName}
-					</h2>
+						<h2
+							style={{
+								fontSize: "0.9rem",
+								cursor: isMobileView ? "pointer" : "default",
+							}}
+							onClick={() => {
+								if (isMobileView) {
+									window.location.href = `/otherprofile/${otherUser.userUid}`;
+								}
+							}}
+						>
+							{userName}
+						</h2>
+						{isTyping && (
+							<p
+								style={{
+									fontSize: "0.7rem",
+									color: "rgba(255,255,255,0.8)",
+								}}
+							>
+								Typing...
+							</p>
+						)}
+					</div>
 				</div>
 				<div style={{ display: "flex", gap: "0.2rem" }}>
 					<div
