@@ -445,8 +445,8 @@ const Chat = () => {
 									style={{
 										background:
 											msg.senderId === currentUserUid
-												? "#7d56c623"
-												: "#7d56c69c",
+												? "rgba(0,0,0,0.2)"
+												: "rgba(255,255,255,0.2)",
 										width: "fit-content",
 										borderRadius:
 											msg.senderId === currentUserUid
@@ -570,6 +570,7 @@ const Chat = () => {
 						flex: "1",
 						marginRight: "0.8rem",
 						pointerEvents: isBlocked ? "none" : "auto",
+						background: "rgba(0,0,0,0.2)",
 					}}
 					disabled={isBlocked}
 				/>

@@ -5,8 +5,20 @@ import SmallerScreens from "./components/SmallerScreens";
 import Login from "./pages/Login/Login";
 import Home from "./pages/home/Home";
 import OtherProfile from "./pages/OtherProfile/OtherProfile";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { changeRootBackground } from "./utils/changeTheme";
 
 function App() {
+	const selectedTheme = useSelector((state) => state.theme.selectedTheme);
+	// console.log("selected theme", selectedTheme);
+
+	useEffect(() => {
+		if (selectedTheme) {
+			changeRootBackground(selectedTheme);
+		}
+	}, [selectedTheme]);
+
 	return (
 		<BrowserRouter>
 			<Routes>

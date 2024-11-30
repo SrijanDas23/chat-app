@@ -82,6 +82,7 @@ const Home = () => {
 								alt="Image of people talking"
 								title="Image of people talking"
 								loading="eager"
+								referrerPolicy="no-referrer"
 							/>
 						</div>
 					)}

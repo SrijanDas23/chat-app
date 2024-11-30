@@ -1,7 +1,15 @@
 import PropTypes from "prop-types";
 import { IoClose } from "react-icons/io5";
+import { useSelector } from "react-redux";
+import { hexToRgba } from "../utils/changeTheme";
 
 const Modal = ({ onClose, children }) => {
+	const selectedTheme = useSelector((state) => state.theme.selectedTheme);
+	const backgroundCol = hexToRgba(
+		selectedTheme[selectedTheme.length - 1],
+		0.5
+	);
+
 	return (
 		<div
 			style={{
@@ -19,7 +27,7 @@ const Modal = ({ onClose, children }) => {
 		>
 			<div
 				style={{
-					backgroundColor: "#24063deb",
+					backgroundColor: backgroundCol,
 					padding: "20px",
 					borderRadius: "8px",
 					position: "relative",
@@ -27,6 +35,7 @@ const Modal = ({ onClose, children }) => {
 					maxWidth: "500px",
 					maxHeight: "50dvh",
 					overflowY: "auto",
+					backdropFilter: "blur(5px)",
 				}}
 			>
 				{children}
@@ -38,7 +47,7 @@ const Modal = ({ onClose, children }) => {
 						border: "none",
 						cursor: "pointer",
 						outline: "none",
-						background:"none"
+						background: "none",
 					}}
 					onClick={onClose}
 				>
