@@ -10,7 +10,12 @@ const Typing = ({ chatRoomRef, otherUserUserUid }) => {
 				const data = snapshot.data();
 				const otherUserTyping =
 					data.typing?.[otherUserUserUid] || false;
-				setIsTyping(otherUserTyping);
+
+				const timeout = setTimeout(() => {
+					setIsTyping(otherUserTyping);
+				}, 300);
+
+				return () => clearTimeout(timeout);
 			}
 		});
 

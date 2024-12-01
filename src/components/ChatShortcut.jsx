@@ -37,7 +37,11 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 				const otherUserTyping =
 					data.typing?.[otherUser.userUid] || false;
 
-				setIsTyping(otherUserTyping);
+				const timeout = setTimeout(() => {
+					setIsTyping(otherUserTyping);
+				}, 300);
+
+				return () => clearTimeout(timeout);
 			}
 		});
 
