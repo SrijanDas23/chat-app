@@ -29,6 +29,7 @@ import { LuSmilePlus } from "react-icons/lu";
 import EmojiPicker from "emoji-picker-react";
 import { BiFontFamily } from "react-icons/bi";
 import Modal from "./Modal";
+import Typing from "./Typing";
 
 const Chat = () => {
 	const [messages, setMessages] = useState([]);
@@ -77,21 +78,7 @@ const Chat = () => {
 
 	const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1000);
 
-	const [isTyping, setIsTyping] = useState(false);
 	let typingTimeout = null;
-
-	useEffect(() => {
-		const typing = onSnapshot(chatRoomRef, (snapshot) => {
-			if (snapshot.exists()) {
-				const data = snapshot.data();
-				const otherUserTyping =
-					data.typing?.[otherUser.userUid] || false;
-				setIsTyping(otherUserTyping);
-			}
-		});
-
-		return () => typing();
-	}, [chatRoomRef, otherUser.userUid]);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -384,16 +371,10 @@ const Chat = () => {
 						>
 							{userName}
 						</h2>
-						{isTyping && (
-							<p
-								style={{
-									fontSize: "0.7rem",
-									color: "rgba(255,255,255,0.8)",
-								}}
-							>
-								Typing...
-							</p>
-						)}
+						<Typing
+							otherUserUserUid={otherUser.userUid}
+							chatRoomRef={chatRoomRef}
+						/>
 					</div>
 				</div>
 				<div style={{ display: "flex", gap: "0.2rem" }}>

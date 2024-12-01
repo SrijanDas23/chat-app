@@ -29,6 +29,21 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 
 	const { showToast } = useToast();
 
+	const [isTyping, setIsTyping] = useState(false);
+	useEffect(() => {
+		const typing = onSnapshot(chatRef, (snapshot) => {
+			if (snapshot.exists()) {
+				const data = snapshot.data();
+				const otherUserTyping =
+					data.typing?.[otherUser.userUid] || false;
+
+				setIsTyping(otherUserTyping);
+			}
+		});
+
+		return () => typing();
+	}, [chatRef, otherUser.userUid]);
+
 	useEffect(() => {
 		const checkBlockingStatus = async () => {
 			try {
@@ -167,7 +182,9 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 						maxWidth: "100px",
 					}}
 				>
-					{draftMessage
+					{isTyping
+						? "Typing..."
+						: draftMessage
 						? `Draft: ${draftMessage}`
 						: latestMessage
 						? `${
