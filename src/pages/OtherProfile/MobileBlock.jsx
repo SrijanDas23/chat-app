@@ -82,7 +82,7 @@ const MobileBlock = ({ user }) => {
 			});
 
 			setIsBlocked(false);
-            navigate("/");
+			navigate("/");
 			dispatch(setOtherUserInChat(user));
 			showToast(`Unblocked ${user.userName} successfully.`);
 		} catch (error) {
@@ -94,9 +94,19 @@ const MobileBlock = ({ user }) => {
 	return (
 		<div>
 			{isBlocked ? (
-				<button onClick={handleUnblock}>Unblock</button>
+				<button
+					onClick={handleUnblock}
+					style={{ background: "rgba(255,255,255,0.08)" }}
+				>
+					Unblock
+				</button>
 			) : (
-				<button onClick={handleBlock}>Block</button>
+				<button
+					onClick={handleBlock}
+					style={{ background: "rgba(255,255,255,0.08)" }}
+				>
+					Block
+				</button>
 			)}
 		</div>
 	);

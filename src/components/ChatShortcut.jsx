@@ -118,7 +118,7 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 
 	const handleUserSelect = (user) => {
 		dispatch(setOtherUserInChat(user));
-		console.log("Selected User:", user);
+		// console.log("Selected User:", user);
 	};
 
 	const defaultAvatar = "../../avatar.jpg";

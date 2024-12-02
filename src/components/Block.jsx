@@ -90,9 +90,19 @@ const Block = () => {
 	return (
 		<div>
 			{isBlocked ? (
-				<button onClick={handleUnblock}>Unblock</button>
+				<button
+					onClick={handleUnblock}
+					style={{ background: "rgba(255,255,255,0.07)" }}
+				>
+					Unblock
+				</button>
 			) : (
-				<button onClick={handleBlock}>Block</button>
+				<button
+					onClick={handleBlock}
+					style={{ background: "rgba(255,255,255,0.07)" }}
+				>
+					Block
+				</button>
 			)}
 		</div>
 	);

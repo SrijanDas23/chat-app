@@ -10,6 +10,12 @@ const Modal = ({ onClose, children }) => {
 		0.5
 	);
 
+	const handleOutsideClick = (e) => {
+		if (e.target === e.currentTarget) {
+			onClose();
+		}
+	};
+
 	return (
 		<div
 			style={{
@@ -18,12 +24,13 @@ const Modal = ({ onClose, children }) => {
 				left: 0,
 				right: 0,
 				bottom: 0,
-				backgroundColor: "rgba(0, 0, 0, 0.3)",
+				backgroundColor: "rgba(0, 0, 0, 0.4)",
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
 				zIndex: 1000,
 			}}
+			onClick={handleOutsideClick}
 		>
 			<div
 				style={{

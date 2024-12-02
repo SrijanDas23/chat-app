@@ -90,11 +90,20 @@ const OAuth = ({ setLoading }) => {
 	return (
 		<div>
 			{currentUser === null ? (
-				<button onClick={handleGoogleClick} type="button">
+				<button
+					onClick={handleGoogleClick}
+					type="button"
+					style={{ background: "rgba(255,255,255,0.07)" }}
+				>
 					Sign In
 				</button>
 			) : (
-				<button onClick={handleLogout}>Sign out</button>
+				<button
+					onClick={handleLogout}
+					style={{ background: "rgba(255,255,255,0.07)" }}
+				>
+					Sign out
+				</button>
 			)}
 		</div>
 	);
