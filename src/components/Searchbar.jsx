@@ -112,7 +112,7 @@ const Searchbar = () => {
 				value={searchTerm}
 				onChange={(e) => setSearchTerm(e.target.value)}
 				style={{
-					border: "1.5px solid #7e56c6",
+					border: "1.5px solid rgba(255, 255, 255, 0.2)",
 					backgroundColor: "transparent",
 					width: isMobileView ? "100%" : "13rem",
 					borderRadius: "20px",
