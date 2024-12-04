@@ -3,12 +3,15 @@ import { IoIosColorPalette } from "react-icons/io";
 import { useSelector, useDispatch } from "react-redux";
 import Tooltip from "./Tooltip";
 import Modal from "./Modal";
+import { useToast } from "../context/ToastContext";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { db } from "../utils/firebase";
 import { setTheme } from "../redux/themes/themeSlice";
-import { changeRootBackground } from "../utils/changeTheme";
 
 const ChangeTheme = () => {
 	const dispatch = useDispatch();
-	const selectedTheme = useSelector((state) => state.theme.selectedTheme);
+	const { currentUser } = useSelector((state) => state.user);
+	const { showToast } = useToast();
 
 	const [isModalOpen, setIsModalOpen] = useState(null);
 	const [showTooltip, setShowTooltip] = useState(null);
@@ -35,8 +38,40 @@ const ChangeTheme = () => {
 	];
 
 	useEffect(() => {
-		changeRootBackground(selectedTheme);
-	}, [selectedTheme]);
+		// If there's a current user, retrieve and apply their theme
+		if (currentUser) {
+			const getUserTheme = async () => {
+				const userRef = doc(db, "users", currentUser.userUid);
+				const userSnap = await getDoc(userRef);
+
+				if (userSnap.exists()) {
+					const userData = userSnap.data();
+					const savedTheme = userData.selectedTheme || [
+						"#7e56c6",
+						"#24063d",
+					];
+					dispatch(setTheme(savedTheme)); // Apply the saved theme
+				}
+			};
+
+			getUserTheme();
+		}
+	}, [currentUser, dispatch]);
+
+	const handleThemeChange = async (colors) => {
+		// Save the selected theme to Firestore
+		if (currentUser) {
+			const userRef = doc(db, "users", currentUser.userUid);
+			await setDoc(userRef, { selectedTheme: colors }, { merge: true });
+
+			// Optionally, you can apply the theme immediately using the `setTheme` Redux action
+			dispatch(setTheme(colors));
+
+			// Show a toast notification
+			showToast("Theme changed successfully!");
+			setIsModalOpen(false);
+		}
+	};
 
 	return (
 		<div
@@ -93,10 +128,7 @@ const ChangeTheme = () => {
 									position: "relative",
 									borderRadius: "50px",
 								}}
-								onClick={() => {
-									dispatch(setTheme(colors));
-									setIsModalOpen(false);
-								}}
+								onClick={() => handleThemeChange(colors)}
 							>
 								<div
 									style={{

@@ -4,6 +4,8 @@ import { setStaySignedIn } from "../../redux/user/userSlice";
 import { Helmet } from "react-helmet-async";
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading";
+import { useToast } from "../../context/ToastContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
 	const dispatch = useDispatch();
@@ -12,6 +14,27 @@ const Login = () => {
 
 	const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1000);
 	const [loading, setLoading] = useState(false);
+
+	const { showToast } = useToast();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		const navigateToHome = () => {
+			try {
+				setLoading(true);
+				navigate("/");
+				showToast("You have been redirected back to home page");
+				setLoading(false);
+			// eslint-disable-next-line no-unused-vars
+			} catch (error) {
+				// console.error("Error redirecting to home page:", error);
+				setLoading(false);
+			}
+		};
+		if (currentUser) {
+			navigateToHome();
+		}
+	}, []);
 
 	useEffect(() => {
 		const handleResize = () => {
