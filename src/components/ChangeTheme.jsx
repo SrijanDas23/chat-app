@@ -38,7 +38,6 @@ const ChangeTheme = () => {
 	];
 
 	useEffect(() => {
-		// If there's a current user, retrieve and apply their theme
 		if (currentUser) {
 			const getUserTheme = async () => {
 				const userRef = doc(db, "users", currentUser.userUid);
@@ -50,7 +49,7 @@ const ChangeTheme = () => {
 						"#7e56c6",
 						"#24063d",
 					];
-					dispatch(setTheme(savedTheme)); // Apply the saved theme
+					dispatch(setTheme(savedTheme));
 				}
 			};
 
@@ -59,15 +58,12 @@ const ChangeTheme = () => {
 	}, [currentUser, dispatch]);
 
 	const handleThemeChange = async (colors) => {
-		// Save the selected theme to Firestore
 		if (currentUser) {
 			const userRef = doc(db, "users", currentUser.userUid);
 			await setDoc(userRef, { selectedTheme: colors }, { merge: true });
 
-			// Optionally, you can apply the theme immediately using the `setTheme` Redux action
 			dispatch(setTheme(colors));
 
-			// Show a toast notification
 			showToast("Theme changed successfully!");
 			setIsModalOpen(false);
 		}
