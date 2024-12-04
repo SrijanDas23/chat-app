@@ -120,7 +120,7 @@ const Chat = () => {
 				setOtherUserBlocked(otherUserBlocked);
 			} catch (error) {
 				// console.error("Error checking block status:", error);
-				showToast("Error checking block status", error);
+				showToast("Error checking block status");
 			}
 		};
 

@@ -55,7 +55,7 @@ const OtherProfile = () => {
 				}
 			} catch (error) {
 				// console.error("Error fetching user:", error);
-				showToast(`Error fetching user: ${error}`);
+				showToast(`Error fetching user`);
 			} finally {
 				setLoading(false);
 			}
@@ -89,7 +89,7 @@ const OtherProfile = () => {
 				setOtherUserBlocked(otherUserBlocked);
 			} catch (error) {
 				// console.error("Error checking block status:", error);
-				showToast(`Error checking block status: ${error}!`);
+				showToast(`Error checking block status!`);
 			}
 		};
 		const intervalId = setInterval(() => {

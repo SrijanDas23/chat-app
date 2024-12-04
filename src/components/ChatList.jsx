@@ -10,14 +10,14 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { db } from "../utils/firebase";
 import ChatShortcut from "./ChatShortcut";
-import { useToast } from "../context/ToastContext";
+// import { useToast } from "../context/ToastContext";
 
 const ChatList = () => {
 	const [chats, setChats] = useState([]);
 	const { currentUser } = useSelector((state) => state.user);
 	const currentUserUid = currentUser?.userUid;
 
-	const { showToast } = useToast();
+	// const { showToast } = useToast();
 
 	const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1000);
 
@@ -85,9 +85,10 @@ const ChatList = () => {
 				);
 
 				setChats(chatWithLastMessage);
+				// eslint-disable-next-line no-unused-vars
 			} catch (error) {
 				// console.error("Error fetching chats: ", error);
-				showToast(`Error checking block status: ${error}!`);
+				// showToast(`Error checking block status`);
 			}
 		};
 

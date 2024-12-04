@@ -73,9 +73,10 @@ const ChatShortcut = ({ otherUser, chatId }) => {
 				setIsBlocked(currentUserBlocked || otherUserBlocked);
 				setOtherUserBlocked(otherUserBlocked);
 				// console.log("checking blocked users");
+			// eslint-disable-next-line no-unused-vars
 			} catch (error) {
 				// console.error("Error checking block status:", error);
-				showToast(`Error checking block status: ${error}!`);
+				showToast(`Error checking block status!`);
 			}
 		};
 

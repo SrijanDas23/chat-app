@@ -18,6 +18,7 @@ import {
 import { useToast } from "../context/ToastContext";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import PropTypes from "prop-types";
+import { setTheme } from "../redux/themes/themeSlice";
 
 const OAuth = ({ setLoading }) => {
 	const navigate = useNavigate();
@@ -75,6 +76,7 @@ const OAuth = ({ setLoading }) => {
 			dispatch(signOutUserStart());
 			const auth = getAuth(app);
 			await signOut(auth);
+			dispatch(setTheme(["#7e56c6", "#24063d"]));
 
 			showToast("Signed out successfully!");
 			dispatch(signOutUserSuccess(null));
