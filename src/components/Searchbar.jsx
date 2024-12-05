@@ -39,6 +39,7 @@ const Searchbar = () => {
 			setResults([]);
 			return;
 		}
+		const trimmedTerm = term.trim();
 
 		setLoading(true);
 		try {
@@ -46,14 +47,14 @@ const Searchbar = () => {
 
 			const uidQuery = query(
 				usersRef,
-				where("userUid", ">=", term),
-				where("userUid", "<=", term + "\uf8ff")
+				where("userUid", ">=", trimmedTerm),
+				where("userUid", "<=", trimmedTerm + "\uf8ff")
 			);
 
 			const nameQuery = query(
 				usersRef,
-				where("userName", ">=", term),
-				where("userName", "<=", term + "\uf8ff")
+				where("userName", ">=", trimmedTerm),
+				where("userName", "<=", trimmedTerm + "\uf8ff")
 			);
 
 			const [uidSnapshot, nameSnapshot] = await Promise.all([

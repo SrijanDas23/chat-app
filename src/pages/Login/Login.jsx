@@ -25,7 +25,7 @@ const Login = () => {
 				navigate("/");
 				showToast("You have been redirected back to home page");
 				setLoading(false);
-			// eslint-disable-next-line no-unused-vars
+				// eslint-disable-next-line no-unused-vars
 			} catch (error) {
 				// console.error("Error redirecting to home page:", error);
 				setLoading(false);

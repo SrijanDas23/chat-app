@@ -49,16 +49,19 @@ const OAuth = ({ setLoading }) => {
 
 			const userSnap = await getDoc(userRef);
 			if (!userSnap.exists()) {
-				userData.selectedTheme = ["#7e56c6", "#24063d"];
 				await setDoc(userRef, {
 					...userData,
 					createdAt: new Date().toISOString(),
+					theme: ["#7e56c6", "#24063d"],
 				});
 			} else {
 				userData = userSnap.data();
 			}
 
 			dispatch(signInSuccess(userData));
+			if (userData.theme) {
+				dispatch(setTheme(userData.theme));
+			}
 
 			showToast(`Welcome, ${userData.userName}!`);
 			navigate("/");

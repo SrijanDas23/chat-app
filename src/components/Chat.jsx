@@ -669,7 +669,7 @@ const Chat = () => {
 						<Tooltip message="Emojis" top="-30px" />
 					)}
 				</div>
-				{showEmojiPicker && (
+				{showEmojiPicker && !isBlocked && (
 					<div
 						style={{
 							position: "absolute",
